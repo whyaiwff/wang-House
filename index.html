@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <title>在线点菜系统 - 数据模块化</title>
+    <title>在线点菜系统 - 移动端布局优化</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -15,7 +15,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>我的餐厅 - 在线点菜</h1>
+        <h1>我的餐厅 - 在线点菜系统</h1>
         
         <!-- 数据管理区 -->
         <div class="data-manager">
@@ -53,21 +53,6 @@
             <span class="total-count">已选：<span id="dish-count">0</span>份</span>
         </div>
 
-        <!-- 主布局容器 -->
-        <div class="main-layout">
-            <div class="category-sidebar">
-                <button class="tab active mobile-tab" data-category="all">全部</button>
-                <button class="tab mobile-tab" data-category="hot">热菜</button>
-                <button class="tab mobile-tab" data-category="cold">凉菜</button>
-                <button class="tab mobile-tab" data-category="snack">小吃</button>
-            </div>
-            <div class="dish-content">
-                <div class="menu" id="dish-list">
-                    <!-- 菜品会通过JS动态渲染到这里 -->
-                </div>
-            </div>
-        </div>
-
         <!-- 订单汇总 -->
         <div class="order-summary">
             <h3>总价：<span id="total-price">¥0</span></h3>
@@ -95,6 +80,24 @@
                 <h4>菜单预览</h4>
                 <img id="menu-image" alt="点单菜单图片" class="mobile-img">
                 <button id="download-image" class="mobile-btn">下载图片</button>
+            </div>
+        </div>
+
+        <!-- 菜单展示区 - 移到页面最底部 -->
+        <div class="menu-display-area">
+            <!-- 主布局容器 -->
+            <div class="main-layout">
+                <div class="category-sidebar">
+                    <button class="tab active mobile-tab" data-category="all">全部</button>
+                    <button class="tab mobile-tab" data-category="hot">热菜</button>
+                    <button class="tab mobile-tab" data-category="cold">凉菜</button>
+                    <button class="tab mobile-tab" data-category="snack">小吃</button>
+                </div>
+                <div class="dish-content">
+                    <div class="menu" id="dish-list">
+                        <!-- 菜品会通过JS动态渲染到这里 -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
