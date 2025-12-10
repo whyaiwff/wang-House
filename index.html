@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线点菜系统</title>
+    <!-- 引入样式文件 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>我的餐厅 - 在线点菜</h1>
+        
+        <!-- 菜品列表 -->
+        <div class="menu">
+            <div class="dish">
+                <h3>麻辣小龙虾</h3>
+                <p class="price">¥88/份</p>
+                <div class="controls">
+                    <button class="minus">-</button>
+                    <span class="count">0</span>
+                    <button class="plus">+</button>
+                </div>
+                <input type="hidden" class="dish-price" value="88">
+            </div>
+
+            <div class="dish">
+                <h3>蒜蓉花甲</h3>
+                <p class="price">¥38/份</p>
+                <div class="controls">
+                    <button class="minus">-</button>
+                    <span class="count">0</span>
+                    <button class="plus">+</button>
+                </div>
+                <input type="hidden" class="dish-price" value="38">
+            </div>
+
+            <div class="dish">
+                <h3>烤羊肉串</h3>
+                <p class="price">¥5/串</p>
+                <div class="controls">
+                    <button class="minus">-</button>
+                    <span class="count">0</span>
+                    <button class="plus">+</button>
+                </div>
+                <input type="hidden" class="dish-price" value="5">
+            </div>
+
+            <div class="dish">
+                <h3>凉拌黄瓜</h3>
+                <p class="price">¥12/份</p>
+                <div class="controls">
+                    <button class="minus">-</button>
+                    <span class="count">0</span>
+                    <button class="plus">+</button>
+                </div>
+                <input type="hidden" class="dish-price" value="12">
+            </div>
+        </div>
+
+        <!-- 订单汇总 -->
+        <div class="order-summary">
+            <h3>订单总价：<span id="total-price">¥0</span></h3>
+            <button id="submit-order">提交订单</button>
+        </div>
+    </div>
+
+    <!-- 引入交互脚本 -->
+    <script src="script.js"></script>
+</body>
+</html>
