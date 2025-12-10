@@ -3,13 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>在线点菜系统 - 便捷版</title>
+    <title>在线点菜系统 - 可管理菜品</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>我的餐厅 - 在线点菜</h1>
         
+        <!-- 菜品管理区 -->
+        <div class="dish-manager">
+            <h3>菜品管理</h3>
+            <div class="add-dish-form">
+                <input type="text" id="new-dish-name" placeholder="菜品名称（如：红烧肉）" required>
+                <input type="number" id="new-dish-price" placeholder="菜品价格（元）" min="0" step="0.01" required>
+                <select id="new-dish-category">
+                    <option value="hot">热菜</option>
+                    <option value="cold">凉菜</option>
+                    <option value="snack">小吃</option>
+                </select>
+                <button id="add-dish-btn">添加菜品</button>
+            </div>
+        </div>
+
         <!-- 批量操作区 -->
         <div class="batch-controls">
             <button id="select-all">全选(+1)</button>
@@ -26,77 +41,9 @@
             <button class="tab" data-category="snack">小吃</button>
         </div>
 
-        <!-- 菜品列表 -->
-        <div class="menu">
-            <!-- 热菜分类 -->
-            <div class="dish" data-category="hot">
-                <h3>麻辣小龙虾</h3>
-                <p class="price">¥88/份</p>
-                <div class="controls">
-                    <button class="minus">-</button>
-                    <!-- 替换为输入框，支持直接输入数量 -->
-                    <input type="number" class="count" value="0" min="0">
-                    <button class="plus">+</button>
-                </div>
-                <input type="hidden" class="dish-price" value="88">
-            </div>
-
-            <div class="dish" data-category="hot">
-                <h3>蒜蓉花甲</h3>
-                <p class="price">¥38/份</p>
-                <div class="controls">
-                    <button class="minus">-</button>
-                    <input type="number" class="count" value="0" min="0">
-                    <button class="plus">+</button>
-                </div>
-                <input type="hidden" class="dish-price" value="38">
-            </div>
-
-            <!-- 凉菜分类 -->
-            <div class="dish" data-category="cold">
-                <h3>凉拌黄瓜</h3>
-                <p class="price">¥12/份</p>
-                <div class="controls">
-                    <button class="minus">-</button>
-                    <input type="number" class="count" value="0" min="0">
-                    <button class="plus">+</button>
-                </div>
-                <input type="hidden" class="dish-price" value="12">
-            </div>
-
-            <div class="dish" data-category="cold">
-                <h3>拍黄瓜</h3>
-                <p class="price">¥10/份</p>
-                <div class="controls">
-                    <button class="minus">-</button>
-                    <input type="number" class="count" value="0" min="0">
-                    <button class="plus">+</button>
-                </div>
-                <input type="hidden" class="dish-price" value="10">
-            </div>
-
-            <!-- 小吃分类 -->
-            <div class="dish" data-category="snack">
-                <h3>烤羊肉串</h3>
-                <p class="price">¥5/串</p>
-                <div class="controls">
-                    <button class="minus">-</button>
-                    <input type="number" class="count" value="0" min="0">
-                    <button class="plus">+</button>
-                </div>
-                <input type="hidden" class="dish-price" value="5">
-            </div>
-
-            <div class="dish" data-category="snack">
-                <h3>烤面筋</h3>
-                <p class="price">¥3/串</p>
-                <div class="controls">
-                    <button class="minus">-</button>
-                    <input type="number" class="count" value="0" min="0">
-                    <button class="plus">+</button>
-                </div>
-                <input type="hidden" class="dish-price" value="3">
-            </div>
+        <!-- 菜品列表（动态生成） -->
+        <div class="menu" id="dish-list">
+            <!-- 菜品会通过JS动态渲染到这里 -->
         </div>
 
         <!-- 订单汇总 -->

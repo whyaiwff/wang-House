@@ -25,6 +25,53 @@ h1 {
     margin-bottom: 20px;
 }
 
+/* 菜品管理区样式 */
+.dish-manager {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f0f8ff;
+    border-radius: 8px;
+    border: 1px solid #e8f4f8;
+}
+
+.dish-manager h3 {
+    margin-bottom: 10px;
+    color: #2d3748;
+}
+
+.add-dish-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.add-dish-form input, .add-dish-form select {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+}
+
+.add-dish-form input:focus, .add-dish-form select:focus {
+    border-color: #457b9d;
+}
+
+#add-dish-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #38a169;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#add-dish-btn:hover {
+    background-color: #31975c;
+}
+
 /* 批量操作区样式 */
 .batch-controls {
     display: flex;
@@ -99,6 +146,30 @@ h1 {
     padding: 20px;
     border-radius: 8px;
     transition: box-shadow 0.3s;
+    position: relative;
+}
+
+/* 删除菜品按钮 */
+.delete-dish {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background-color: #ff4d4f;
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+}
+
+.delete-dish:hover {
+    opacity: 1;
 }
 
 .dish:hover {
@@ -179,4 +250,12 @@ h1 {
 
 #submit-order:hover {
     background-color: #d62828;
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+    .add-dish-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
