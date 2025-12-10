@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文菲菲专属点菜系统</title>
+    <title>在线点菜系统 - 可编辑菜品</title>
     <link rel="stylesheet" href="style.css">
-    <!-- 引入html2canvas库（用于生成图片） -->
+    <!-- 引入html2canvas库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
@@ -54,10 +54,9 @@
             <button id="submit-order">提交订单</button>
         </div>
 
-        <!-- 新增：订单菜单预览区（默认隐藏） -->
+        <!-- 订单菜单预览区（默认隐藏） -->
         <div class="order-preview" id="order-preview" style="display: none;">
             <h3>您的点单菜单</h3>
-            <!-- 菜单内容容器（用于生成图片） -->
             <div class="menu-card" id="menu-card">
                 <div class="menu-header">
                     <h2>我的餐厅 - 点单清单</h2>
@@ -71,14 +70,38 @@
                     <p>份数：<span id="menu-count">0</span>份</p>
                 </div>
             </div>
-            <!-- 生成图片按钮 -->
             <button id="generate-image">生成菜单图片</button>
-            <!-- 图片预览区 -->
             <div class="image-preview" id="image-preview" style="display: none;">
                 <h4>菜单图片预览</h4>
                 <img id="menu-image" alt="点单菜单图片">
                 <button id="download-image">下载图片</button>
             </div>
+        </div>
+    </div>
+
+    <!-- 新增：菜品编辑弹窗（默认隐藏） -->
+    <div class="modal" id="edit-dish-modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>编辑菜品</h3>
+            <input type="hidden" id="edit-dish-id">
+            <div class="modal-form-item">
+                <label>菜品名称：</label>
+                <input type="text" id="edit-dish-name" placeholder="请输入菜品名称" required>
+            </div>
+            <div class="modal-form-item">
+                <label>菜品价格：</label>
+                <input type="number" id="edit-dish-price" placeholder="请输入菜品价格" min="0" step="0.01" required>
+            </div>
+            <div class="modal-form-item">
+                <label>菜品分类：</label>
+                <select id="edit-dish-category">
+                    <option value="hot">热菜</option>
+                    <option value="cold">凉菜</option>
+                    <option value="snack">小吃</option>
+                </select>
+            </div>
+            <button id="save-edit-btn">保存修改</button>
         </div>
     </div>
 

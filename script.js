@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 定义本地存储的key
     const STORAGE_KEY = 'restaurant_dish_data';
 
-    // 初始菜品数据（备用：当本地存储无数据时使用）
+    // 初始菜品数据
     const defaultDishData = [
         { id: 1, name: '麻辣小龙虾', price: 88, category: 'hot' },
         { id: 2, name: '蒜蓉花甲', price: 38, category: 'hot' },
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const newDishName = document.getElementById('new-dish-name');
     const newDishPrice = document.getElementById('new-dish-price');
     const newDishCategory = document.getElementById('new-dish-category');
-    // 新增：订单预览相关
+    // 订单预览相关
     const orderPreviewEl = document.getElementById('order-preview');
     const menuCardEl = document.getElementById('menu-card');
     const menuBodyEl = document.getElementById('menu-body');
@@ -51,6 +51,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const imagePreviewEl = document.getElementById('image-preview');
     const menuImageEl = document.getElementById('menu-image');
     const downloadImageBtn = document.getElementById('download-image');
+    // 新增：编辑弹窗相关
+    const editModalEl = document.getElementById('edit-dish-modal');
+    const closeModalBtn = document.querySelector('.close-modal');
+    const editDishIdEl = document.getElementById('edit-dish-id');
+    const editDishNameEl = document.getElementById('edit-dish-name');
+    const editDishPriceEl = document.getElementById('edit-dish-price');
+    const editDishCategoryEl = document.getElementById('edit-dish-category');
+    const saveEditBtn = document.getElementById('save-edit-btn');
 
     // 初始化：渲染菜品列表
     renderDishList();
@@ -71,8 +79,12 @@ document.addEventListener('DOMContentLoaded', function() {
             dishEl.dataset.category = dish.category;
             dishEl.dataset.id = dish.id;
 
+            // 新增：编辑按钮（和删除按钮放在同一区域）
             dishEl.innerHTML = `
-                <button class="delete-dish">×</button>
+                <div class="dish-actions">
+                    <button class="edit-dish">✏️</button>
+                    <button class="delete-dish">×</button>
+                </div>
                 <h3>${dish.name}</h3>
                 <p class="price">¥${dish.price}/${dish.category === 'snack' ? '串' : '份'}</p>
                 <div class="controls">
@@ -88,12 +100,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 绑定单个菜品的事件
+    // 绑定单个菜品的事件（新增编辑按钮事件）
     function bindDishEvents(dishEl) {
         const minusBtn = dishEl.querySelector('.minus');
         const plusBtn = dishEl.querySelector('.plus');
         const countInput = dishEl.querySelector('.count');
         const deleteBtn = dishEl.querySelector('.delete-dish');
+        // 新增：编辑按钮
+        const editBtn = dishEl.querySelector('.edit-dish');
         const dishId = parseInt(dishEl.dataset.id);
 
         minusBtn.disabled = true;
@@ -132,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // 删除菜品（同步保存到本地存储）
+        // 删除菜品
         deleteBtn.addEventListener('click', function() {
             if (confirm(`确定删除【${dishEl.querySelector('h3').textContent}】吗？`)) {
                 dishData = dishData.filter(dish => dish.id !== dishId);
@@ -142,6 +156,77 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateOrderInfo();
             }
         });
+
+        // 新增：编辑菜品按钮点击事件
+        editBtn.addEventListener('click', function() {
+            // 查找当前菜品数据
+            const dish = dishData.find(item => item.id === dishId);
+            if (!dish) return;
+
+            // 填充编辑表单
+            editDishIdEl.value = dish.id;
+            editDishNameEl.value = dish.name;
+            editDishPriceEl.value = dish.price;
+            editDishCategoryEl.value = dish.category;
+
+            // 显示编辑弹窗
+            editModalEl.style.display = 'flex';
+        });
+    }
+
+    // 新增：关闭编辑弹窗
+    function closeEditModal() {
+        editModalEl.style.display = 'none';
+        // 清空表单
+        editDishIdEl.value = '';
+        editDishNameEl.value = '';
+        editDishPriceEl.value = '';
+    }
+
+    // 新增：保存菜品编辑
+    function saveDishEdit() {
+        // 获取编辑表单数据
+        const dishId = parseInt(editDishIdEl.value);
+        const name = editDishNameEl.value.trim();
+        const price = parseFloat(editDishPriceEl.value);
+        const category = editDishCategoryEl.value;
+
+        // 验证输入
+        if (!name) {
+            alert('请输入菜品名称！');
+            return;
+        }
+        if (isNaN(price) || price < 0) {
+            alert('请输入有效的菜品价格！');
+            return;
+        }
+
+        // 查找并更新菜品数据
+        const dishIndex = dishData.findIndex(item => item.id === dishId);
+        if (dishIndex === -1) {
+            alert('菜品不存在！');
+            return;
+        }
+
+        dishData[dishIndex] = {
+            id: dishId,
+            name: name,
+            price: price,
+            category: category
+        };
+
+        // 保存到本地存储
+        saveDishDataToStorage(dishData);
+
+        // 刷新菜品列表
+        const activeTab = document.querySelector('.tab.active');
+        renderDishList(activeTab.dataset.category);
+        updateOrderInfo();
+
+        // 关闭弹窗
+        closeEditModal();
+
+        alert(`成功修改菜品：【${name}】`);
     }
 
     // 更新订单总价和份数
@@ -205,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 添加新菜品（同步保存到本地存储）
+    // 添加新菜品
     addDishBtn.addEventListener('click', function() {
         const name = newDishName.value.trim();
         const price = parseFloat(newDishPrice.value);
@@ -240,25 +325,19 @@ document.addEventListener('DOMContentLoaded', function() {
         alert(`成功添加菜品：【${name}】`);
     });
 
-    // 渲染订单菜单（核心：展示已选菜品）
+    // 渲染订单菜单
     function renderOrderMenu() {
-        // 清空原有菜单
         menuBodyEl.innerHTML = '';
         let totalPrice = 0;
         let totalCount = 0;
-        let hasSelectedDish = false;
 
-        // 获取已选菜品（数量>0的）
         document.querySelectorAll('.dish').forEach(dish => {
             const count = parseInt(dish.querySelector('.count').value) || 0;
             if (count > 0) {
-                hasSelectedDish = true;
                 const name = dish.querySelector('h3').textContent;
                 const price = parseFloat(dish.querySelector('.dish-price').value);
-                const unitPrice = price.toFixed(2);
                 const subtotal = (count * price).toFixed(2);
 
-                // 创建菜品项
                 const dishItemEl = document.createElement('div');
                 dishItemEl.className = 'dish-item';
                 dishItemEl.innerHTML = `
@@ -272,11 +351,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // 更新菜单总计
         menuTotalEl.textContent = `¥${totalPrice.toFixed(2)}`;
         menuCountEl.textContent = totalCount;
 
-        // 设置下单时间
         const now = new Date();
         const timeStr = now.toLocaleString('zh-CN', { 
             year: 'numeric', 
@@ -288,33 +365,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         orderTimeEl.textContent = `下单时间：${timeStr}`;
 
-        // 显示订单预览区
         orderPreviewEl.style.display = 'block';
-        // 隐藏图片预览区（重置）
         imagePreviewEl.style.display = 'none';
     }
 
-    // 生成菜单图片（核心：html2canvas）
+    // 生成菜单图片
     function generateMenuImage() {
-        // 显示加载提示
         generateImageBtn.textContent = '生成中...';
         generateImageBtn.disabled = true;
 
-        // 使用html2canvas将菜单卡片转为canvas
         html2canvas(menuCardEl, {
-            scale: 2, // 提高分辨率
-            useCORS: true, // 支持跨域图片（如果有）
-            backgroundColor: '#ffffff' // 背景色
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#ffffff'
         }).then(canvas => {
-            // 将canvas转为图片URL
             const imageUrl = canvas.toDataURL('image/png');
-            // 显示图片预览
             menuImageEl.src = imageUrl;
             imagePreviewEl.style.display = 'block';
-            // 保存图片URL到下载按钮（用于下载）
             downloadImageBtn.dataset.imageUrl = imageUrl;
 
-            // 恢复按钮状态
             generateImageBtn.textContent = '生成菜单图片';
             generateImageBtn.disabled = false;
         }).catch(error => {
@@ -332,18 +401,15 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // 创建下载链接
         const link = document.createElement('a');
         link.href = imageUrl;
-        // 设置文件名（含时间）
         const now = new Date();
         const fileName = `点单菜单_${now.getTime()}.png`;
         link.download = fileName;
-        // 触发下载
         link.click();
     }
 
-    // 提交订单（新增：渲染订单菜单）
+    // 提交订单
     submitBtn.addEventListener('click', function() {
         const total = parseFloat(totalPriceEl.textContent.replace('¥', ''));
         if (total === 0) {
@@ -351,18 +417,25 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // 渲染订单菜单
         renderOrderMenu();
 
         alert(`订单提交成功！
 已选菜品：${dishCountEl.textContent}份
 总价：${totalPriceEl.textContent}
 请查看下方菜单并可生成图片保存~`);
-        // 不清空数量（方便用户查看/修改）
     });
 
-    // 绑定生成图片按钮事件
+    // 绑定编辑弹窗相关事件
+    closeModalBtn.addEventListener('click', closeEditModal);
+    saveEditBtn.addEventListener('click', saveDishEdit);
+    // 点击弹窗外区域关闭弹窗
+    editModalEl.addEventListener('click', function(e) {
+        if (e.target === editModalEl) {
+            closeEditModal();
+        }
+    });
+
+    // 绑定生成/下载图片按钮事件
     generateImageBtn.addEventListener('click', generateMenuImage);
-    // 绑定下载图片按钮事件
     downloadImageBtn.addEventListener('click', downloadMenuImage);
 });
