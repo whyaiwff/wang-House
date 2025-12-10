@@ -5,88 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <title>在线点菜系统 - 移动端布局修复</title>
+    <title>在线点菜系统 - 数据模块化</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- 先引入数据模块 -->
     <script src="dishData.js"></script>
 </head>
 <body>
     <div class="container">
-        <!-- 顶部操作区 - 新增容器，用于滚动 -->
-        <div class="top-area">
-            <h1>我的餐厅 - 在线点菜系统</h1>
-            
-            <!-- 数据管理区 -->
-            <div class="data-manager">
-                <button id="clear-data" class="mobile-btn">清空所有数据</button>
-                <button id="export-data" class="mobile-btn">导出数据</button>
-                <button id="import-data" class="mobile-btn">导入数据</button>
-                <input type="file" id="data-import-file" accept=".json" hidden>
-            </div>
-            
-            <!-- 菜品管理区 -->
-            <div class="dish-manager">
-                <h3>菜品管理</h3>
-                <div class="add-dish-form">
-                    <input type="text" id="new-dish-name" placeholder="菜品名称（如：红烧肉）" required>
-                    <input type="number" id="new-dish-price" placeholder="菜品价格（元）" min="0" step="0.01" required>
-                    <select id="new-dish-category">
-                        <option value="hot">热菜</option>
-                        <option value="cold">凉菜</option>
-                        <option value="snack">小吃</option>
-                    </select>
-                    <div class="image-upload">
-                        <label for="new-dish-image" class="upload-btn">选择图片</label>
-                        <input type="file" id="new-dish-image" accept="image/*" hidden capture="camera">
-                        <span id="new-dish-image-name">未选择</span>
-                    </div>
-                    <button id="add-dish-btn">添加菜品</button>
+        <h1>我的餐厅 - 在线点菜</h1>
+        
+        <!-- 数据管理区 -->
+        <div class="data-manager">
+            <button id="clear-data" class="mobile-btn">清空所有数据</button>
+            <button id="export-data" class="mobile-btn">导出数据</button>
+            <button id="import-data" class="mobile-btn">导入数据</button>
+            <input type="file" id="data-import-file" accept=".json" hidden>
+        </div>
+        
+        <!-- 菜品管理区 -->
+        <div class="dish-manager">
+            <h3>菜品管理</h3>
+            <div class="add-dish-form">
+                <input type="text" id="new-dish-name" placeholder="菜品名称（如：红烧肉）" required>
+                <input type="number" id="new-dish-price" placeholder="菜品价格（元）" min="0" step="0.01" required>
+                <select id="new-dish-category">
+                    <option value="hot">热菜</option>
+                    <option value="cold">凉菜</option>
+                    <option value="snack">小吃</option>
+                </select>
+                <div class="image-upload">
+                    <label for="new-dish-image" class="upload-btn">选择图片</label>
+                    <input type="file" id="new-dish-image" accept="image/*" hidden capture="camera">
+                    <span id="new-dish-image-name">未选择</span>
                 </div>
-            </div>
-
-            <!-- 批量操作区 -->
-            <div class="batch-controls">
-                <button id="select-all" class="mobile-btn">全选(+1)</button>
-                <button id="minus-all" class="mobile-btn">全部-1</button>
-                <button id="clear-all" class="mobile-btn">清空所有</button>
-                <span class="total-count">已选：<span id="dish-count">0</span>份</span>
-            </div>
-
-            <!-- 订单汇总 -->
-            <div class="order-summary">
-                <h3>总价：<span id="total-price">¥0</span></h3>
-                <button id="submit-order" class="mobile-primary-btn">提交订单</button>
-            </div>
-
-            <!-- 订单菜单预览区 -->
-            <div class="order-preview" id="order-preview" style="display: none;">
-                <h3>您的点单菜单</h3>
-                <div class="menu-card" id="menu-card">
-                    <div class="menu-header">
-                        <h2>我的餐厅</h2>
-                        <p class="order-time" id="order-time"></p>
-                    </div>
-                    <div class="menu-body" id="menu-body">
-                        <!-- 已选菜品会动态渲染到这里 -->
-                    </div>
-                    <div class="menu-footer">
-                        <p>总计：<span id="menu-total">¥0</span></p>
-                        <p>份数：<span id="menu-count">0</span>份</p>
-                    </div>
-                </div>
-                <button id="generate-image" class="mobile-btn">生成菜单图片</button>
-                <div class="image-preview" id="image-preview" style="display: none;">
-                    <h4>菜单预览</h4>
-                    <img id="menu-image" alt="点单菜单图片" class="mobile-img">
-                    <button id="download-image" class="mobile-btn">下载图片</button>
-                </div>
+                <button id="add-dish-btn">添加菜品</button>
             </div>
         </div>
 
-        <!-- 菜单展示区 - 底部左右分栏 -->
-        <div class="menu-display-area">
+        <!-- 批量操作区 -->
+        <div class="batch-controls">
+            <button id="select-all" class="mobile-btn">全选(+1)</button>
+            <button id="minus-all" class="mobile-btn">全部-1</button>
+            <button id="clear-all" class="mobile-btn">清空所有</button>
+            <span class="total-count">已选：<span id="dish-count">0</span>份</span>
+        </div>
+
+        <!-- 主布局容器 -->
+        <div class="main-layout">
             <div class="category-sidebar">
                 <button class="tab active mobile-tab" data-category="all">全部</button>
                 <button class="tab mobile-tab" data-category="hot">热菜</button>
@@ -97,6 +65,36 @@
                 <div class="menu" id="dish-list">
                     <!-- 菜品会通过JS动态渲染到这里 -->
                 </div>
+            </div>
+        </div>
+
+        <!-- 订单汇总 -->
+        <div class="order-summary">
+            <h3>总价：<span id="total-price">¥0</span></h3>
+            <button id="submit-order" class="mobile-primary-btn">提交订单</button>
+        </div>
+
+        <!-- 订单菜单预览区 -->
+        <div class="order-preview" id="order-preview" style="display: none;">
+            <h3>您的点单菜单</h3>
+            <div class="menu-card" id="menu-card">
+                <div class="menu-header">
+                    <h2>我的餐厅</h2>
+                    <p class="order-time" id="order-time"></p>
+                </div>
+                <div class="menu-body" id="menu-body">
+                    <!-- 已选菜品会动态渲染到这里 -->
+                </div>
+                <div class="menu-footer">
+                    <p>总计：<span id="menu-total">¥0</span></p>
+                    <p>份数：<span id="menu-count">0</span>份</p>
+                </div>
+            </div>
+            <button id="generate-image" class="mobile-btn">生成菜单图片</button>
+            <div class="image-preview" id="image-preview" style="display: none;">
+                <h4>菜单预览</h4>
+                <img id="menu-image" alt="点单菜单图片" class="mobile-img">
+                <button id="download-image" class="mobile-btn">下载图片</button>
             </div>
         </div>
     </div>
