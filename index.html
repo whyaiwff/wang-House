@@ -3,58 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>在线点菜系统</title>
-    <!-- 引入样式文件 -->
+    <title>在线点菜系统 - 便捷版</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>我的餐厅 - 在线点菜</h1>
         
+        <!-- 批量操作区 -->
+        <div class="batch-controls">
+            <button id="select-all">全选(+1)</button>
+            <button id="minus-all">全部-1</button>
+            <button id="clear-all">清空所有</button>
+            <span class="total-count">已选菜品：<span id="dish-count">0</span>份</span>
+        </div>
+
+        <!-- 菜品分类标签 -->
+        <div class="category-tabs">
+            <button class="tab active" data-category="all">全部</button>
+            <button class="tab" data-category="hot">热菜</button>
+            <button class="tab" data-category="cold">凉菜</button>
+            <button class="tab" data-category="snack">小吃</button>
+        </div>
+
         <!-- 菜品列表 -->
         <div class="menu">
-            <div class="dish">
+            <!-- 热菜分类 -->
+            <div class="dish" data-category="hot">
                 <h3>麻辣小龙虾</h3>
                 <p class="price">¥88/份</p>
                 <div class="controls">
                     <button class="minus">-</button>
-                    <span class="count">0</span>
+                    <!-- 替换为输入框，支持直接输入数量 -->
+                    <input type="number" class="count" value="0" min="0">
                     <button class="plus">+</button>
                 </div>
                 <input type="hidden" class="dish-price" value="88">
             </div>
 
-            <div class="dish">
+            <div class="dish" data-category="hot">
                 <h3>蒜蓉花甲</h3>
                 <p class="price">¥38/份</p>
                 <div class="controls">
                     <button class="minus">-</button>
-                    <span class="count">0</span>
+                    <input type="number" class="count" value="0" min="0">
                     <button class="plus">+</button>
                 </div>
                 <input type="hidden" class="dish-price" value="38">
             </div>
 
-            <div class="dish">
+            <!-- 凉菜分类 -->
+            <div class="dish" data-category="cold">
+                <h3>凉拌黄瓜</h3>
+                <p class="price">¥12/份</p>
+                <div class="controls">
+                    <button class="minus">-</button>
+                    <input type="number" class="count" value="0" min="0">
+                    <button class="plus">+</button>
+                </div>
+                <input type="hidden" class="dish-price" value="12">
+            </div>
+
+            <div class="dish" data-category="cold">
+                <h3>拍黄瓜</h3>
+                <p class="price">¥10/份</p>
+                <div class="controls">
+                    <button class="minus">-</button>
+                    <input type="number" class="count" value="0" min="0">
+                    <button class="plus">+</button>
+                </div>
+                <input type="hidden" class="dish-price" value="10">
+            </div>
+
+            <!-- 小吃分类 -->
+            <div class="dish" data-category="snack">
                 <h3>烤羊肉串</h3>
                 <p class="price">¥5/串</p>
                 <div class="controls">
                     <button class="minus">-</button>
-                    <span class="count">0</span>
+                    <input type="number" class="count" value="0" min="0">
                     <button class="plus">+</button>
                 </div>
                 <input type="hidden" class="dish-price" value="5">
             </div>
 
-            <div class="dish">
-                <h3>凉拌黄瓜</h3>
-                <p class="price">¥12/份</p>
+            <div class="dish" data-category="snack">
+                <h3>烤面筋</h3>
+                <p class="price">¥3/串</p>
                 <div class="controls">
                     <button class="minus">-</button>
-                    <span class="count">0</span>
+                    <input type="number" class="count" value="0" min="0">
                     <button class="plus">+</button>
                 </div>
-                <input type="hidden" class="dish-price" value="12">
+                <input type="hidden" class="dish-price" value="3">
             </div>
         </div>
 
@@ -65,7 +106,6 @@
         </div>
     </div>
 
-    <!-- 引入交互脚本 -->
     <script src="script.js"></script>
 </body>
 </html>
