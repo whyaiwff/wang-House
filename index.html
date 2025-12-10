@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>在线点菜系统 - 支持图片裁剪压缩</title>
-    <!-- 引入cropper.js依赖 -->
+    <title>文菲菲的餐厅</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -12,7 +11,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>我的餐厅 - 在线点菜</h1>
+        <h1>文菲菲的餐厅 - 在线点菜</h1>
         
         <!-- 菜品管理区 -->
         <div class="dish-manager">
@@ -25,7 +24,6 @@
                     <option value="cold">凉菜</option>
                     <option value="snack">小吃</option>
                 </select>
-                <!-- 菜品图片上传 -->
                 <div class="image-upload">
                     <label for="new-dish-image" class="upload-btn">选择图片</label>
                     <input type="file" id="new-dish-image" accept="image/*" hidden>
@@ -43,17 +41,22 @@
             <span class="total-count">已选菜品：<span id="dish-count">0</span>份</span>
         </div>
 
-        <!-- 菜品分类标签 -->
-        <div class="category-tabs">
-            <button class="tab active" data-category="all">全部</button>
-            <button class="tab" data-category="hot">热菜</button>
-            <button class="tab" data-category="cold">凉菜</button>
-            <button class="tab" data-category="snack">小吃</button>
-        </div>
+        <!-- 新增：左右布局容器 -->
+        <div class="main-layout">
+            <!-- 左侧分类栏 -->
+            <div class="category-sidebar">
+                <button class="tab active" data-category="all">全部</button>
+                <button class="tab" data-category="hot">热菜</button>
+                <button class="tab" data-category="cold">凉菜</button>
+                <button class="tab" data-category="snack">小吃</button>
+            </div>
 
-        <!-- 菜品列表（动态生成） -->
-        <div class="menu" id="dish-list">
-            <!-- 菜品会通过JS动态渲染到这里 -->
+            <!-- 右侧菜品列表区 -->
+            <div class="dish-content">
+                <div class="menu" id="dish-list">
+                    <!-- 菜品会通过JS动态渲染到这里 -->
+                </div>
+            </div>
         </div>
 
         <!-- 订单汇总 -->
@@ -67,7 +70,7 @@
             <h3>您的点单菜单</h3>
             <div class="menu-card" id="menu-card">
                 <div class="menu-header">
-                    <h2>我的餐厅 - 点单清单</h2>
+                    <h2>文菲菲的餐厅 - 点单清单</h2>
                     <p class="order-time" id="order-time"></p>
                 </div>
                 <div class="menu-body" id="menu-body">
@@ -109,7 +112,6 @@
                     <option value="snack">小吃</option>
                 </select>
             </div>
-            <!-- 编辑菜品图片 -->
             <div class="modal-form-item">
                 <label>菜品图片：</label>
                 <div class="image-upload">
@@ -123,7 +125,7 @@
         </div>
     </div>
 
-    <!-- 新增：图片裁剪弹窗（默认隐藏） -->
+    <!-- 图片裁剪弹窗（默认隐藏） -->
     <div class="modal" id="crop-image-modal" style="display: none;">
         <div class="modal-content crop-modal-content">
             <span class="close-modal crop-close-modal">&times;</span>

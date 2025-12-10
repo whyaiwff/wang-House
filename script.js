@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const editDishImagePreview = document.getElementById('edit-dish-image-preview');
     const saveEditBtn = document.getElementById('save-edit-btn');
 
-    // 绑定新增菜品图片上传事件（新增裁剪逻辑）
+    // 绑定新增菜品图片上传事件
     newDishImage.addEventListener('change', function() {
         const file = this.files[0];
         if (!file) {
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 绑定编辑菜品图片上传事件（新增裁剪逻辑）
+    // 绑定编辑菜品图片上传事件
     editDishImage.addEventListener('change', function() {
         const file = this.files[0];
         if (!file) {
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始化订单信息
     updateOrderInfo();
 
-    // 渲染菜品列表函数
+    // 渲染菜品列表函数（调整菜品卡片结构）
     function renderDishList(filterCategory = 'all') {
         dishListEl.innerHTML = '';
 
@@ -260,6 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dishEl.dataset.category = dish.category;
             dishEl.dataset.id = dish.id;
 
+            // 调整菜品卡片结构适配左右布局
             dishEl.innerHTML = `
                 <div class="dish-actions">
                     <button class="edit-dish">✏️</button>
@@ -268,8 +269,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="dish-image">
                     <img src="${dish.image}" alt="${dish.name}">
                 </div>
-                <h3>${dish.name}</h3>
-                <p class="price">¥${dish.price}/${dish.category === 'snack' ? '串' : '份'}</p>
+                <div class="dish-info">
+                    <h3>${dish.name}</h3>
+                    <p class="price">¥${dish.price}/${dish.category === 'snack' ? '串' : '份'}</p>
+                </div>
                 <div class="controls">
                     <button class="minus">-</button>
                     <input type="number" class="count" value="0" min="0">
