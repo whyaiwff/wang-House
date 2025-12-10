@@ -2,20 +2,38 @@ document.addEventListener('DOMContentLoaded', function() {
     // 定义本地存储的key
     const STORAGE_KEY = 'restaurant_dish_data';
 
+    // 默认菜品图片（Base64占位图）
+    const DEFAULT_DISH_IMAGE = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTMwIDQ1IEw2MCAzMCBMOTAgNDUgTDkwIDgwIEw2MCA5NSBMzAgODBaIiBmaWxsPSIjY2NjIi8+PHRleHQgeD0iNjAiIHk9IjEwNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+5Zu+5Lq65Zu+5rqQPC90ZXh0Pjwvc3ZnPg==';
+
+    // 图片压缩配置
+    const IMAGE_CONFIG = {
+        maxWidth: 800,    // 最大宽度
+        maxHeight: 800,   // 最大高度
+        quality: 0.8,     // 压缩质量(0-1)
+        cropRatio: 4/3    // 裁剪比例（宽高比）
+    };
+
     // 初始菜品数据
     const defaultDishData = [
-        { id: 1, name: '麻辣小龙虾', price: 88, category: 'hot' },
-        { id: 2, name: '蒜蓉花甲', price: 38, category: 'hot' },
-        { id: 3, name: '凉拌黄瓜', price: 12, category: 'cold' },
-        { id: 4, name: '拍黄瓜', price: 10, category: 'cold' },
-        { id: 5, name: '烤羊肉串', price: 5, category: 'snack' },
-        { id: 6, name: '烤面筋', price: 3, category: 'snack' }
+        { id: 1, name: '麻辣小龙虾', price: 88, category: 'hot', image: DEFAULT_DISH_IMAGE },
+        { id: 2, name: '蒜蓉花甲', price: 38, category: 'hot', image: DEFAULT_DISH_IMAGE },
+        { id: 3, name: '凉拌黄瓜', price: 12, category: 'cold', image: DEFAULT_DISH_IMAGE },
+        { id: 4, name: '拍黄瓜', price: 10, category: 'cold', image: DEFAULT_DISH_IMAGE },
+        { id: 5, name: '烤羊肉串', price: 5, category: 'snack', image: DEFAULT_DISH_IMAGE },
+        { id: 6, name: '烤面筋', price: 3, category: 'snack', image: DEFAULT_DISH_IMAGE }
     ];
 
     // 从本地存储读取菜品数据
     function getDishDataFromStorage() {
         const storedData = localStorage.getItem(STORAGE_KEY);
-        return storedData ? JSON.parse(storedData) : defaultDishData;
+        if (!storedData) return defaultDishData;
+        
+        // 兼容旧数据
+        const data = JSON.parse(storedData);
+        return data.map(dish => ({
+            ...dish,
+            image: dish.image || DEFAULT_DISH_IMAGE
+        }));
     }
 
     // 将菜品数据保存到本地存储
@@ -23,8 +41,124 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
 
+    // 压缩图片并返回Base64
+    function compressImage(img, width, height, quality) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 计算缩放后的尺寸
+        let newWidth = width;
+        let newHeight = height;
+        
+        if (width > IMAGE_CONFIG.maxWidth || height > IMAGE_CONFIG.maxHeight) {
+            const ratio = Math.min(IMAGE_CONFIG.maxWidth / width, IMAGE_CONFIG.maxHeight / height);
+            newWidth = width * ratio;
+            newHeight = height * ratio;
+        }
+        
+        // 设置canvas尺寸
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+        
+        // 绘制并压缩图片
+        ctx.drawImage(img, 0, 0, newWidth, newHeight);
+        return canvas.toDataURL('image/jpeg', quality || IMAGE_CONFIG.quality);
+    }
+
+    // 裁剪并压缩图片
+    function cropAndCompressImage(file, callback, isEdit = false) {
+        if (!file) {
+            callback(null);
+            return;
+        }
+        
+        // 限制图片大小（5MB）
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            alert('图片大小不能超过5MB！');
+            callback(null);
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const cropImageEl = document.getElementById('crop-image');
+            const cropModalEl = document.getElementById('crop-image-modal');
+            
+            // 设置裁剪图片源
+            cropImageEl.src = e.target.result;
+            cropImageEl.onload = function() {
+                // 显示裁剪弹窗
+                cropModalEl.style.display = 'flex';
+                
+                // 初始化裁剪器
+                let cropper = new Cropper(cropImageEl, {
+                    aspectRatio: IMAGE_CONFIG.cropRatio,
+                    viewMode: 1,
+                    preview: isEdit ? '#edit-dish-image-preview' : null,
+                    autoCropArea: 0.8,
+                    movable: true,
+                    zoomable: true,
+                    rotatable: true,
+                    scalable: true
+                });
+
+                // 绑定确认裁剪事件
+                document.getElementById('confirm-crop-btn').onclick = function() {
+                    // 获取裁剪后的画布
+                    const canvas = cropper.getCroppedCanvas({
+                        width: IMAGE_CONFIG.maxWidth,
+                        height: IMAGE_CONFIG.maxWidth / IMAGE_CONFIG.cropRatio
+                    });
+                    
+                    // 压缩并转为Base64
+                    const compressedBase64 = compressImage(
+                        canvas, 
+                        canvas.width, 
+                        canvas.height, 
+                        IMAGE_CONFIG.quality
+                    );
+                    
+                    // 销毁裁剪器
+                    cropper.destroy();
+                    // 关闭裁剪弹窗
+                    cropModalEl.style.display = 'none';
+                    
+                    // 返回处理后的Base64
+                    callback(compressedBase64);
+                };
+
+                // 绑定关闭裁剪弹窗事件
+                document.querySelector('.crop-close-modal').onclick = function() {
+                    cropper.destroy();
+                    cropModalEl.style.display = 'none';
+                    callback(null);
+                };
+
+                // 点击弹窗外关闭
+                cropModalEl.onclick = function(e) {
+                    if (e.target === cropModalEl) {
+                        cropper.destroy();
+                        cropModalEl.style.display = 'none';
+                        callback(null);
+                    }
+                };
+            };
+        };
+        
+        reader.onerror = function() {
+            alert('图片读取失败！');
+            callback(null);
+        };
+        
+        reader.readAsDataURL(file);
+    }
+
     // 初始化菜品数据
     let dishData = getDishDataFromStorage();
+    // 临时存储新增/编辑的图片Base64
+    let newDishImageBase64 = null;
+    let editDishImageBase64 = null;
 
     // DOM元素
     const dishListEl = document.getElementById('dish-list');
@@ -40,6 +174,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const newDishName = document.getElementById('new-dish-name');
     const newDishPrice = document.getElementById('new-dish-price');
     const newDishCategory = document.getElementById('new-dish-category');
+    const newDishImage = document.getElementById('new-dish-image');
+    const newDishImageName = document.getElementById('new-dish-image-name');
     // 订单预览相关
     const orderPreviewEl = document.getElementById('order-preview');
     const menuCardEl = document.getElementById('menu-card');
@@ -51,14 +187,59 @@ document.addEventListener('DOMContentLoaded', function() {
     const imagePreviewEl = document.getElementById('image-preview');
     const menuImageEl = document.getElementById('menu-image');
     const downloadImageBtn = document.getElementById('download-image');
-    // 新增：编辑弹窗相关
+    // 编辑弹窗相关
     const editModalEl = document.getElementById('edit-dish-modal');
     const closeModalBtn = document.querySelector('.close-modal');
     const editDishIdEl = document.getElementById('edit-dish-id');
     const editDishNameEl = document.getElementById('edit-dish-name');
     const editDishPriceEl = document.getElementById('edit-dish-price');
     const editDishCategoryEl = document.getElementById('edit-dish-category');
+    const editDishImage = document.getElementById('edit-dish-image');
+    const editDishImageName = document.getElementById('edit-dish-image-name');
+    const editDishImagePreview = document.getElementById('edit-dish-image-preview');
     const saveEditBtn = document.getElementById('save-edit-btn');
+
+    // 绑定新增菜品图片上传事件（新增裁剪逻辑）
+    newDishImage.addEventListener('change', function() {
+        const file = this.files[0];
+        if (!file) {
+            newDishImageName.textContent = '未选择';
+            newDishImageBase64 = null;
+            return;
+        }
+
+        newDishImageName.textContent = file.name;
+        // 裁剪并压缩图片
+        cropAndCompressImage(file, function(base64) {
+            newDishImageBase64 = base64;
+            // 如果取消裁剪，清空选择
+            if (!base64) {
+                newDishImageName.textContent = '未选择';
+                newDishImage.value = '';
+            }
+        });
+    });
+
+    // 绑定编辑菜品图片上传事件（新增裁剪逻辑）
+    editDishImage.addEventListener('change', function() {
+        const file = this.files[0];
+        if (!file) {
+            editDishImageName.textContent = '未更换';
+            editDishImageBase64 = null;
+            return;
+        }
+
+        editDishImageName.textContent = file.name;
+        // 裁剪并压缩图片（编辑模式）
+        cropAndCompressImage(file, function(base64) {
+            editDishImageBase64 = base64;
+            // 如果取消裁剪，清空选择
+            if (!base64) {
+                editDishImageName.textContent = '未更换';
+                editDishImage.value = '';
+            }
+        }, true);
+    });
 
     // 初始化：渲染菜品列表
     renderDishList();
@@ -79,11 +260,13 @@ document.addEventListener('DOMContentLoaded', function() {
             dishEl.dataset.category = dish.category;
             dishEl.dataset.id = dish.id;
 
-            // 新增：编辑按钮（和删除按钮放在同一区域）
             dishEl.innerHTML = `
                 <div class="dish-actions">
                     <button class="edit-dish">✏️</button>
                     <button class="delete-dish">×</button>
+                </div>
+                <div class="dish-image">
+                    <img src="${dish.image}" alt="${dish.name}">
                 </div>
                 <h3>${dish.name}</h3>
                 <p class="price">¥${dish.price}/${dish.category === 'snack' ? '串' : '份'}</p>
@@ -93,6 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button class="plus">+</button>
                 </div>
                 <input type="hidden" class="dish-price" value="${dish.price}">
+                <input type="hidden" class="dish-image" value="${dish.image}">
             `;
 
             dishListEl.appendChild(dishEl);
@@ -100,13 +284,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 绑定单个菜品的事件（新增编辑按钮事件）
+    // 绑定单个菜品的事件
     function bindDishEvents(dishEl) {
         const minusBtn = dishEl.querySelector('.minus');
         const plusBtn = dishEl.querySelector('.plus');
         const countInput = dishEl.querySelector('.count');
         const deleteBtn = dishEl.querySelector('.delete-dish');
-        // 新增：编辑按钮
         const editBtn = dishEl.querySelector('.edit-dish');
         const dishId = parseInt(dishEl.dataset.id);
 
@@ -157,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // 新增：编辑菜品按钮点击事件
+        // 编辑菜品按钮点击事件
         editBtn.addEventListener('click', function() {
             // 查找当前菜品数据
             const dish = dishData.find(item => item.id === dishId);
@@ -168,22 +351,32 @@ document.addEventListener('DOMContentLoaded', function() {
             editDishNameEl.value = dish.name;
             editDishPriceEl.value = dish.price;
             editDishCategoryEl.value = dish.category;
+            // 重置编辑图片相关
+            editDishImageName.textContent = '未更换';
+            editDishImageBase64 = null;
+            // 显示当前图片预览
+            editDishImagePreview.innerHTML = `<img src="${dish.image}" alt="${dish.name}">`;
 
             // 显示编辑弹窗
             editModalEl.style.display = 'flex';
         });
     }
 
-    // 新增：关闭编辑弹窗
+    // 关闭编辑弹窗
     function closeEditModal() {
         editModalEl.style.display = 'none';
         // 清空表单
         editDishIdEl.value = '';
         editDishNameEl.value = '';
         editDishPriceEl.value = '';
+        editDishImageName.textContent = '未更换';
+        editDishImagePreview.innerHTML = '';
+        editDishImageBase64 = null;
+        // 清空文件选择
+        editDishImage.value = '';
     }
 
-    // 新增：保存菜品编辑
+    // 保存菜品编辑
     function saveDishEdit() {
         // 获取编辑表单数据
         const dishId = parseInt(editDishIdEl.value);
@@ -208,11 +401,15 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // 保留原有图片，除非上传了新图片
+        const image = editDishImageBase64 || dishData[dishIndex].image;
+
         dishData[dishIndex] = {
             id: dishId,
             name: name,
             price: price,
-            category: category
+            category: category,
+            image: image
         };
 
         // 保存到本地存储
@@ -295,7 +492,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const name = newDishName.value.trim();
         const price = parseFloat(newDishPrice.value);
         const category = newDishCategory.value;
+        // 使用裁剪压缩后的图片或默认图片
+        const image = newDishImageBase64 || DEFAULT_DISH_IMAGE;
 
+        // 验证输入
         if (!name) {
             alert('请输入菜品名称！');
             return;
@@ -310,7 +510,8 @@ document.addEventListener('DOMContentLoaded', function() {
             id: maxId + 1,
             name: name,
             price: price,
-            category: category
+            category: category,
+            image: image
         };
 
         dishData.push(newDish);
@@ -319,8 +520,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const activeTab = document.querySelector('.tab.active');
         renderDishList(activeTab.dataset.category);
 
+        // 清空表单
         newDishName.value = '';
         newDishPrice.value = '';
+        newDishImageName.textContent = '未选择';
+        newDishImageBase64 = null;
+        newDishImage.value = '';
 
         alert(`成功添加菜品：【${name}】`);
     });
@@ -336,13 +541,20 @@ document.addEventListener('DOMContentLoaded', function() {
             if (count > 0) {
                 const name = dish.querySelector('h3').textContent;
                 const price = parseFloat(dish.querySelector('.dish-price').value);
+                const image = dish.querySelector('.dish-image').value;
                 const subtotal = (count * price).toFixed(2);
 
+                // 创建带图片的菜品项
                 const dishItemEl = document.createElement('div');
                 dishItemEl.className = 'dish-item';
                 dishItemEl.innerHTML = `
-                    <span class="dish-name">${name} × ${count}</span>
-                    <span class="dish-price-count">¥${subtotal}</span>
+                    <div class="dish-image-small">
+                        <img src="${image}" alt="${name}">
+                    </div>
+                    <div class="dish-info">
+                        <div class="dish-name">${name} × ${count}</div>
+                        <div class="dish-price-count">¥${subtotal}</div>
+                    </div>
                 `;
                 menuBodyEl.appendChild(dishItemEl);
 

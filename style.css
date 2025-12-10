@@ -58,6 +58,56 @@ h1 {
     border-color: #457b9d;
 }
 
+/* 图片上传样式 */
+.image-upload {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.upload-btn {
+    padding: 8px 12px;
+    background-color: #457b9d;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.upload-btn:hover {
+    background-color: #3a6b87;
+}
+
+#new-dish-image-name, #edit-dish-image-name {
+    font-size: 12px;
+    color: #666;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 小图预览样式 */
+.image-preview-small {
+    margin-top: 8px;
+    width: 80px;
+    height: 80px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f8f8;
+}
+
+.image-preview-small img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 #add-dish-btn {
     padding: 8px 15px;
     border: none;
@@ -147,6 +197,32 @@ h1 {
     border-radius: 8px;
     transition: box-shadow 0.3s;
     position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 菜品图片展示 */
+.dish-image {
+    width: 100%;
+    height: 180px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    background-color: #f8f8f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dish-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dish-image-placeholder {
+    color: #999;
+    font-size: 14px;
 }
 
 /* 删除/编辑菜品按钮 */
@@ -156,6 +232,7 @@ h1 {
     right: 10px;
     display: flex;
     gap: 5px;
+    z-index: 10;
 }
 
 .delete-dish, .edit-dish {
@@ -169,16 +246,15 @@ h1 {
     align-items: center;
     justify-content: center;
     opacity: 0.7;
+    background-color: rgba(0,0,0,0.6);
 }
 
 .delete-dish {
-    background-color: #ff4d4f;
-    color: white;
+    color: #ff4d4f;
 }
 
 .edit-dish {
-    background-color: #457b9d;
-    color: white;
+    color: #457b9d;
 }
 
 .delete-dish:hover, .edit-dish:hover {
@@ -204,6 +280,7 @@ h1 {
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-top: auto;
 }
 
 .controls button {
@@ -315,16 +392,41 @@ h1 {
     margin-bottom: 15px;
 }
 
+/* 菜单中带图片的菜品项 */
 .menu-body .dish-item {
     display: flex;
-    justify-content: space-between;
+    gap: 10px;
     padding: 8px 0;
     border-bottom: 1px dashed #eee;
+    align-items: center;
+}
+
+.menu-body .dish-image-small {
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background-color: #f8f8f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-body .dish-image-small img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.menu-body .dish-info {
+    flex: 1;
 }
 
 .menu-body .dish-name {
     font-size: 16px;
     color: #333;
+    margin-bottom: 4px;
 }
 
 .menu-body .dish-price-count {
@@ -389,7 +491,7 @@ h1 {
     background-color: #31975c;
 }
 
-/* 新增：编辑弹窗样式 */
+/* 编辑弹窗样式 */
 .modal {
     position: fixed;
     top: 0;
@@ -470,10 +572,57 @@ h1 {
     background-color: #3a6b87;
 }
 
+/* 新增：裁剪弹窗样式 */
+.crop-modal-content {
+    max-width: 80%;
+    max-height: 80vh;
+    padding: 20px;
+}
+
+.crop-container {
+    width: 100%;
+    height: 400px;
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+#crop-image {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.crop-controls {
+    text-align: center;
+    margin-top: 15px;
+}
+
+#confirm-crop-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #38a169;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#confirm-crop-btn:hover {
+    background-color: #31975c;
+}
+
 /* 响应式适配 */
 @media (max-width: 768px) {
     .add-dish-form {
         flex-direction: column;
         align-items: stretch;
+    }
+    .dish-image {
+        height: 150px;
+    }
+    .crop-container {
+        height: 250px;
+    }
+    .crop-modal-content {
+        max-width: 95%;
     }
 }

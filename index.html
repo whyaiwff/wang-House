@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>在线点菜系统 - 可编辑菜品</title>
+    <title>在线点菜系统 - 支持图片裁剪压缩</title>
+    <!-- 引入cropper.js依赖 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <link rel="stylesheet" href="style.css">
-    <!-- 引入html2canvas库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
@@ -23,6 +25,12 @@
                     <option value="cold">凉菜</option>
                     <option value="snack">小吃</option>
                 </select>
+                <!-- 菜品图片上传 -->
+                <div class="image-upload">
+                    <label for="new-dish-image" class="upload-btn">选择图片</label>
+                    <input type="file" id="new-dish-image" accept="image/*" hidden>
+                    <span id="new-dish-image-name">未选择</span>
+                </div>
                 <button id="add-dish-btn">添加菜品</button>
             </div>
         </div>
@@ -79,7 +87,7 @@
         </div>
     </div>
 
-    <!-- 新增：菜品编辑弹窗（默认隐藏） -->
+    <!-- 菜品编辑弹窗（默认隐藏） -->
     <div class="modal" id="edit-dish-modal" style="display: none;">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -101,7 +109,31 @@
                     <option value="snack">小吃</option>
                 </select>
             </div>
+            <!-- 编辑菜品图片 -->
+            <div class="modal-form-item">
+                <label>菜品图片：</label>
+                <div class="image-upload">
+                    <label for="edit-dish-image" class="upload-btn">更换图片</label>
+                    <input type="file" id="edit-dish-image" accept="image/*" hidden>
+                    <span id="edit-dish-image-name">未更换</span>
+                </div>
+                <div class="image-preview-small" id="edit-dish-image-preview"></div>
+            </div>
             <button id="save-edit-btn">保存修改</button>
+        </div>
+    </div>
+
+    <!-- 新增：图片裁剪弹窗（默认隐藏） -->
+    <div class="modal" id="crop-image-modal" style="display: none;">
+        <div class="modal-content crop-modal-content">
+            <span class="close-modal crop-close-modal">&times;</span>
+            <h3>裁剪菜品图片</h3>
+            <div class="crop-container">
+                <img id="crop-image" alt="待裁剪图片">
+            </div>
+            <div class="crop-controls">
+                <button id="confirm-crop-btn">确认裁剪</button>
+            </div>
         </div>
     </div>
 
