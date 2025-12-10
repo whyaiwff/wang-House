@@ -1,41 +1,47 @@
-/* 基础重置 - 移动端优先 */
+/* 基础重置 - 移动端优先，强制重置所有样式 */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: -apple-system, BlinkMacSystemFont, "微软雅黑", "Helvetica Neue", sans-serif;
-    touch-action: manipulation; /* 禁用双击缩放，优化触控 */
+    touch-action: manipulation; /* 禁用双击缩放 */
 }
 
-/* 移动端body优化 */
-body {
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden; /* 禁止页面整体滚动 */
     background-color: #f5f5f5;
+}
+
+/* 主容器 - 全屏flex布局，强制垂直排列 */
+.container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    overflow: hidden;
     padding: 0;
     margin: 0;
-    font-size: 16px; /* 基础字体大小适配移动端 */
-    line-height: 1.5;
 }
 
-/* 容器适配 - 移动端全屏 */
-.container {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    background: white;
+/* 顶部操作区 - 固定高度，可滚动 */
+.top-area {
     padding: 15px;
-    border-radius: 0;
-    box-shadow: none;
-    min-height: 100vh;
+    overflow-y: auto;
+    max-height: 40vh; /* 顶部区域最多占40%高度 */
+    border-bottom: 1px solid #eee;
 }
 
-/* 标题适配 */
+/* 标题样式 */
 h1 {
     text-align: center;
     color: #333;
     margin-bottom: 15px;
     font-size: 20px;
     font-weight: 600;
-    padding: 10px 0;
+    padding-bottom: 10px;
     border-bottom: 1px solid #eee;
 }
 
@@ -43,6 +49,44 @@ h3 {
     font-size: 18px;
     font-weight: 600;
     margin-bottom: 10px;
+}
+
+/* 数据管理区样式 */
+.data-manager {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f0f8ff;
+    border-radius: 8px;
+}
+
+#clear-data {
+    background-color: #e63946;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+#export-data {
+    background-color: #38a169;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+#import-data {
+    background-color: #457b9d;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 14px;
 }
 
 /* 菜品管理区 - 移动端优化 */
@@ -57,64 +101,48 @@ h3 {
 .add-dish-form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
+    gap: 10px;
 }
 
 .add-dish-form input, .add-dish-form select {
-    padding: 12px 15px;
+    padding: 12px;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 6px;
     font-size: 16px;
     outline: none;
     width: 100%;
-    height: 48px;
 }
 
-/* 图片上传样式 - 移动端优化 */
+/* 图片上传样式 */
 .image-upload {
     display: flex;
     align-items: center;
     gap: 8px;
-    width: 100%;
 }
 
 .upload-btn {
-    padding: 12px 20px;
+    padding: 10px 15px;
     background-color: #457b9d;
     color: white;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 16px;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.upload-btn:hover {
-    background-color: #3a6b87;
+    font-size: 14px;
+    border: none;
 }
 
 #new-dish-image-name, #edit-dish-image-name {
     font-size: 14px;
     color: #666;
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
-/* 小图预览样式 - 移动端优化 */
+/* 小图预览 */
 .image-preview-small {
     margin-top: 10px;
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 6px;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f8f8f8;
 }
 
 .image-preview-small img {
@@ -123,45 +151,7 @@ h3 {
     object-fit: cover;
 }
 
-/* 按钮基础样式 - 移动端优化 */
-button {
-    border: none;
-    outline: none;
-    -webkit-tap-highlight-color: transparent; /* 移除点击高亮 */
-}
-
-/* 移动端通用按钮样式 */
-.mobile-btn {
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-size: 16px;
-    height: 48px;
-    min-width: 80px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* 移动端主要按钮样式 */
-.mobile-primary-btn {
-    padding: 14px 20px;
-    border-radius: 8px;
-    font-size: 18px;
-    height: 52px;
-    width: 100%;
-    background-color: #e63946;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-#add-dish-btn {
-    background-color: #38a169;
-    color: white;
-}
-
-/* 批量操作区 - 移动端优化 */
+/* 批量操作区 */
 .batch-controls {
     display: flex;
     flex-wrap: wrap;
@@ -172,24 +162,24 @@ button {
     border-radius: 8px;
 }
 
-.batch-controls button {
-    flex: 1;
-    min-width: 80px;
+#select-all, #minus-all, #clear-all {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: white;
 }
 
 #select-all {
     background-color: #457b9d;
-    color: white;
 }
 
 #minus-all {
     background-color: #fca311;
-    color: white;
 }
 
 #clear-all {
     background-color: #e63946;
-    color: white;
 }
 
 .total-count {
@@ -198,90 +188,161 @@ button {
     font-size: 16px;
     display: flex;
     align-items: center;
-    padding: 0 10px;
 }
 
-/* 主布局 - 移动端优先 */
-.main-layout {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 20px;
-    min-height: 300px;
+/* 订单汇总 */
+.order-summary {
+    text-align: center;
+    padding: 10px 0;
+    margin-bottom: 15px;
 }
 
-/* 分类侧边栏 - 移动端优化 */
-.category-sidebar {
+#total-price {
+    color: #e63946;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#submit-order {
     width: 100%;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    padding: 8px;
-    display: flex;
-    overflow-x: auto;
-    gap: 8px;
-    scrollbar-width: none; /* 隐藏滚动条 */
-    -ms-overflow-style: none;
+    padding: 12px;
+    background-color: #e63946;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-top: 10px;
 }
 
-.category-sidebar::-webkit-scrollbar {
+#add-dish-btn {
+    background-color: #38a169;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+/* 订单预览区 */
+.order-preview {
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #e8f4f8;
+    border-radius: 8px;
+    background-color: #f8fffe;
     display: none;
 }
 
-/* 分类按钮 - 移动端优化 */
-.mobile-tab {
-    padding: 12px 20px;
-    border-radius: 24px;
+.menu-card {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     background-color: white;
-    color: #333;
-    font-size: 16px;
-    font-weight: 500;
-    white-space: nowrap;
-    flex-shrink: 0;
-    border: 1px solid #eee;
+    margin-bottom: 10px;
 }
 
-.category-sidebar .tab.active {
+.menu-body .dish-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed #eee;
+}
+
+.menu-body .dish-image-small {
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+#generate-image, #download-image {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
     background-color: #457b9d;
     color: white;
-    border-color: #457b9d;
+    font-size: 16px;
+    margin-top: 10px;
 }
 
-/* 右侧菜品内容区 - 移动端优化 */
+.mobile-img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+/* ========== 核心修复：菜单展示区 - 强制左右分栏 ========== */
+.menu-display-area {
+    flex: 1; /* 占满剩余高度 */
+    display: flex;
+    width: 100%;
+    height: 60vh; /* 固定占60%视口高度 */
+    overflow: hidden;
+    border-top: 1px solid #eee;
+}
+
+/* 左侧分类栏 - 强制固定宽度 */
+.category-sidebar {
+    width: 100px;
+    background-color: #f8f9fa;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0; /* 禁止收缩 */
+}
+
+/* 分类按钮 - 垂直排列 */
+.tab {
+    width: 100%;
+    padding: 15px 8px;
+    border: none;
+    background: white;
+    color: #333;
+    font-size: 14px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.tab.active {
+    background-color: #e8f4f8;
+    color: #e63946;
+    font-weight: bold;
+}
+
+/* 右侧菜品区 - 强制自适应 */
 .dish-content {
     flex: 1;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch; /* 弹性滚动 */
+    padding: 0 10px;
+    background-color: #fafafa;
 }
 
-/* 菜品列表 - 移动端单列 */
-.menu {
+/* 菜品列表 - 单列展示 */
+#dish-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
+    padding: 8px 0;
 }
 
-/* 菜品卡片 - 移动端深度优化 */
+/* 菜品卡片 - 移动端单列样式 */
 .dish {
-    border: 1px solid #eee;
-    padding: 15px;
-    border-radius: 12px;
-    transition: box-shadow 0.3s;
-    position: relative;
+    background: white;
+    border-radius: 8px;
+    padding: 10px;
     display: flex;
-    flex-direction: column;
-    background-color: white;
+    align-items: center;
+    border: 1px solid #eee;
 }
 
 .dish-image {
-    width: 100%;
-    height: 180px;
-    border-radius: 8px;
+    width: 70px;
+    height: 70px;
+    border-radius: 6px;
     overflow: hidden;
-    background-color: #f8f8f8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 12px;
+    flex-shrink: 0;
 }
 
 .dish-image img {
@@ -290,140 +351,79 @@ button {
     object-fit: cover;
 }
 
-/* 删除/编辑按钮 - 移动端优化 */
 .dish-actions {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 5px;
+    right: 5px;
     display: flex;
-    gap: 8px;
-    z-index: 10;
+    gap: 5px;
 }
 
 .delete-dish, .edit-dish {
-    width: 36px;
-    height: 36px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    cursor: pointer;
-    font-size: 18px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    border: none;
+    font-size: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0.9;
-    background-color: rgba(0,0,0,0.7);
 }
 
-/* 菜品信息 - 移动端优化 */
 .dish-info {
-    width: 100%;
-    margin-bottom: 15px;
+    flex: 1;
+    margin: 0 10px;
+    position: relative;
+    min-height: 60px;
 }
 
-.dish h3 {
-    color: #333;
+.dish-info h3 {
+    font-size: 16px;
     margin-bottom: 5px;
-    font-size: 18px;
 }
 
 .price {
     color: #e63946;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 16px;
 }
 
-/* 数量控制区 - 移动端优化 */
+/* 数量控制 */
 .controls {
     display: flex;
     align-items: center;
-    gap: 15px;
-    width: 100%;
-    justify-content: flex-end;
+    gap: 8px;
 }
 
 .controls button {
-    width: 48px;
-    height: 48px;
-    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     background-color: #457b9d;
     color: white;
-    font-size: 20px;
-    font-weight: bold;
+    border: none;
+    font-size: 16px;
 }
 
 .controls .count {
-    width: 80px;
-    height: 48px;
+    width: 40px;
+    height: 32px;
     text-align: center;
-    font-size: 18px;
     border: 1px solid #ddd;
-    border-radius: 8px;
-    outline: none;
-}
-
-/* 订单汇总 - 移动端优化 */
-.order-summary {
-    text-align: center;
-    padding: 15px;
-    border-top: 1px solid #eee;
-    margin-bottom: 20px;
-}
-
-#total-price {
-    color: #e63946;
-    font-size: 22px;
-    font-weight: bold;
-}
-
-/* 订单预览区 - 移动端优化 */
-.order-preview {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid #e8f4f8;
-    border-radius: 8px;
-    background-color: #f8fffe;
-}
-
-/* 菜单卡片 - 移动端优化 */
-.menu-card {
-    width: 100%;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: white;
-    margin-bottom: 15px;
-}
-
-.menu-body .dish-item {
-    display: flex;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px dashed #eee;
-    align-items: center;
-}
-
-.menu-body .dish-image-small {
-    width: 60px;
-    height: 60px;
     border-radius: 4px;
-    overflow: hidden;
-    flex-shrink: 0;
+    font-size: 14px;
 }
 
-/* 图片预览 - 移动端优化 */
-.mobile-img {
-    max-width: 100%;
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
-
-/* 模态框基础样式 - 移动端优化 */
+/* 模态框样式 */
 .modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.7);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -431,184 +431,123 @@ button {
     padding: 15px;
 }
 
-/* 移动端模态框内容 */
-.mobile-modal {
-    width: 100%;
-    max-width: 95%;
-    background-color: white;
+.modal-content {
+    width: 95%;
+    max-width: 400px;
+    background: white;
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 10px;
     max-height: 90vh;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    position: relative;
 }
 
-/* 关闭按钮 - 移动端优化 */
 .mobile-close {
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #666;
     position: absolute;
     top: 15px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
 }
 
-/* 表单元素 - 移动端优化 */
+.modal-form-item {
+    margin-bottom: 15px;
+}
+
+.modal-form-item label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
 .mobile-input, .mobile-select {
-    padding: 12px 15px !important;
-    border-radius: 8px !important;
-    font-size: 16px !important;
-    height: 48px !important;
-    width: 100% !important;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
 }
 
-/* 裁剪弹窗 - 移动端深度优化 */
-.mobile-crop-modal {
+#save-edit-btn {
     width: 100%;
-    max-width: 95%;
-    max-height: 90vh;
-    padding: 15px;
+    padding: 12px;
+    background-color: #38a169;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-top: 10px;
 }
 
-.mobile-crop-container {
+/* 裁剪弹窗 */
+.crop-container {
     width: 100%;
-    height: 300px;
+    height: 250px;
     margin: 15px 0;
     overflow: hidden;
 }
 
-.mobile-crop-img {
-    max-width: 100%;
-    max-height: 100%;
+#confirm-crop-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #457b9d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-top: 10px;
 }
 
-/* 横屏适配 */
-@media (orientation: landscape) and (max-height: 500px) {
-    .mobile-crop-container {
-        height: 200px;
-    }
-    .dish-image {
-        height: 120px;
-    }
-}
-
-/* 大屏适配（平板/桌面） */
+/* 大屏适配 (768px以上) */
 @media (min-width: 768px) {
     .container {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        min-height: auto;
+        height: auto;
+        overflow: auto;
     }
-
-    h1 {
-        font-size: 24px;
-        margin-bottom: 20px;
+    
+    .top-area {
+        max-height: none;
+        overflow: visible;
     }
-
-    .main-layout {
-        flex-direction: row;
-        gap: 20px;
+    
+    .menu-display-area {
+        height: 600px;
     }
-
+    
     .category-sidebar {
-        width: 180px;
-        flex-direction: column;
-        padding: 15px 0;
-        overflow-x: hidden;
+        width: 150px;
     }
-
-    .mobile-tab {
-        width: 100%;
-        border-radius: 0;
-        text-align: left;
-        padding: 12px 15px;
-        border: none;
-    }
-
-    .category-sidebar .tab.active::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 4px;
-        height: 100%;
-        background-color: #e63946;
-    }
-
-    .dish {
-        flex-direction: row;
-        align-items: center;
-        gap: 15px;
-        padding: 20px;
-    }
-
-    .dish-image {
-        width: 120px;
-        height: 120px;
-        margin-bottom: 0;
-    }
-
-    .dish-info {
-        margin-bottom: 0;
-        flex: 1;
-    }
-
-    .controls {
-        justify-content: flex-end;
-        margin-left: auto;
-        width: auto;
-    }
-
-    .mobile-modal {
-        max-width: 400px;
-    }
-
-    .mobile-crop-modal {
-        max-width: 80%;
-    }
-
-    .add-dish-form {
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-
-    .add-dish-form input, .add-dish-form select {
-        width: auto;
-        flex: 1;
-        min-width: 120px;
-    }
-}
-
-/* 高清屏适配 */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    button, input, select {
-        -webkit-appearance: none; /* 移除iOS默认样式 */
-        appearance: none;
+    
+    .tab {
+        font-size: 16px;
+        padding: 20px 15px;
     }
     
     .dish {
-        border: 0.5px solid #eee;
+        padding: 15px;
+    }
+    
+    .dish-image {
+        width: 100px;
+        height: 100px;
     }
 }
 
-/* 禁用iOS输入框默认样式 */
-input[type="number"] {
-    -webkit-appearance: none;
-    -moz-appearance: textfield;
-}
-
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+/* 横屏适配 */
+@media (orientation: landscape) and (max-height: 500px) {
+    .top-area {
+        max-height: 30vh;
+    }
+    
+    .menu-display-area {
+        height: 70vh;
+    }
+    
+    .crop-container {
+        height: 180px;
+    }
 }
