@@ -2,7 +2,10 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 核心移动端视口优化 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>文菲菲的餐厅</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
@@ -11,9 +14,9 @@
 </head>
 <body>
     <div class="container">
-        <h1>文菲菲的餐厅 - 在线点菜</h1>
+        <h1>文菲菲的餐厅</h1>
         
-        <!-- 菜品管理区 -->
+        <!-- 菜品管理区 - 移动端优化 -->
         <div class="dish-manager">
             <h3>菜品管理</h3>
             <div class="add-dish-form">
@@ -24,34 +27,35 @@
                     <option value="cold">凉菜</option>
                     <option value="snack">小吃</option>
                 </select>
+                <!-- 菜品图片上传 - 移动端优化 -->
                 <div class="image-upload">
                     <label for="new-dish-image" class="upload-btn">选择图片</label>
-                    <input type="file" id="new-dish-image" accept="image/*" hidden>
+                    <input type="file" id="new-dish-image" accept="image/*" hidden capture="camera">
                     <span id="new-dish-image-name">未选择</span>
                 </div>
                 <button id="add-dish-btn">添加菜品</button>
             </div>
         </div>
 
-        <!-- 批量操作区 -->
+        <!-- 批量操作区 - 移动端优化 -->
         <div class="batch-controls">
-            <button id="select-all">全选(+1)</button>
-            <button id="minus-all">全部-1</button>
-            <button id="clear-all">清空所有</button>
-            <span class="total-count">已选菜品：<span id="dish-count">0</span>份</span>
+            <button id="select-all" class="mobile-btn">全选(+1)</button>
+            <button id="minus-all" class="mobile-btn">全部-1</button>
+            <button id="clear-all" class="mobile-btn">清空所有</button>
+            <span class="total-count">已选：<span id="dish-count">0</span>份</span>
         </div>
 
-        <!-- 新增：左右布局容器 -->
+        <!-- 主布局容器 -->
         <div class="main-layout">
-            <!-- 左侧分类栏 -->
+            <!-- 左侧分类栏 - 移动端优化 -->
             <div class="category-sidebar">
-                <button class="tab active" data-category="all">全部</button>
-                <button class="tab" data-category="hot">热菜</button>
-                <button class="tab" data-category="cold">凉菜</button>
-                <button class="tab" data-category="snack">小吃</button>
+                <button class="tab active mobile-tab" data-category="all">全部</button>
+                <button class="tab mobile-tab" data-category="hot">热菜</button>
+                <button class="tab mobile-tab" data-category="cold">凉菜</button>
+                <button class="tab mobile-tab" data-category="snack">小吃</button>
             </div>
 
-            <!-- 右侧菜品列表区 -->
+            <!-- 右侧菜品内容区 - 移动端优化 -->
             <div class="dish-content">
                 <div class="menu" id="dish-list">
                     <!-- 菜品会通过JS动态渲染到这里 -->
@@ -59,18 +63,18 @@
             </div>
         </div>
 
-        <!-- 订单汇总 -->
+        <!-- 订单汇总 - 移动端优化 -->
         <div class="order-summary">
-            <h3>订单总价：<span id="total-price">¥0</span></h3>
-            <button id="submit-order">提交订单</button>
+            <h3>总价：<span id="total-price">¥0</span></h3>
+            <button id="submit-order" class="mobile-primary-btn">提交订单</button>
         </div>
 
-        <!-- 订单菜单预览区（默认隐藏） -->
+        <!-- 订单菜单预览区 - 移动端优化 -->
         <div class="order-preview" id="order-preview" style="display: none;">
             <h3>您的点单菜单</h3>
             <div class="menu-card" id="menu-card">
                 <div class="menu-header">
-                    <h2>文菲菲的餐厅 - 点单清单</h2>
+                    <h2>文菲菲的餐厅</h2>
                     <p class="order-time" id="order-time"></p>
                 </div>
                 <div class="menu-body" id="menu-body">
@@ -81,60 +85,61 @@
                     <p>份数：<span id="menu-count">0</span>份</p>
                 </div>
             </div>
-            <button id="generate-image">生成菜单图片</button>
+            <button id="generate-image" class="mobile-btn">生成菜单图片</button>
             <div class="image-preview" id="image-preview" style="display: none;">
-                <h4>菜单图片预览</h4>
-                <img id="menu-image" alt="点单菜单图片">
-                <button id="download-image">下载图片</button>
+                <h4>菜单预览</h4>
+                <img id="menu-image" alt="点单菜单图片" class="mobile-img">
+                <button id="download-image" class="mobile-btn">下载图片</button>
             </div>
         </div>
     </div>
 
-    <!-- 菜品编辑弹窗（默认隐藏） -->
+    <!-- 菜品编辑弹窗 - 移动端优化 -->
     <div class="modal" id="edit-dish-modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
+        <div class="modal-content mobile-modal">
+            <span class="close-modal mobile-close">&times;</span>
             <h3>编辑菜品</h3>
             <input type="hidden" id="edit-dish-id">
             <div class="modal-form-item">
                 <label>菜品名称：</label>
-                <input type="text" id="edit-dish-name" placeholder="请输入菜品名称" required>
+                <input type="text" id="edit-dish-name" placeholder="请输入菜品名称" required class="mobile-input">
             </div>
             <div class="modal-form-item">
                 <label>菜品价格：</label>
-                <input type="number" id="edit-dish-price" placeholder="请输入菜品价格" min="0" step="0.01" required>
+                <input type="number" id="edit-dish-price" placeholder="请输入菜品价格" min="0" step="0.01" required class="mobile-input">
             </div>
             <div class="modal-form-item">
                 <label>菜品分类：</label>
-                <select id="edit-dish-category">
+                <select id="edit-dish-category" class="mobile-select">
                     <option value="hot">热菜</option>
                     <option value="cold">凉菜</option>
                     <option value="snack">小吃</option>
                 </select>
             </div>
+            <!-- 编辑菜品图片 - 移动端优化 -->
             <div class="modal-form-item">
                 <label>菜品图片：</label>
                 <div class="image-upload">
-                    <label for="edit-dish-image" class="upload-btn">更换图片</label>
-                    <input type="file" id="edit-dish-image" accept="image/*" hidden>
+                    <label for="edit-dish-image" class="upload-btn mobile-btn">更换图片</label>
+                    <input type="file" id="edit-dish-image" accept="image/*" hidden capture="camera">
                     <span id="edit-dish-image-name">未更换</span>
                 </div>
                 <div class="image-preview-small" id="edit-dish-image-preview"></div>
             </div>
-            <button id="save-edit-btn">保存修改</button>
+            <button id="save-edit-btn" class="mobile-primary-btn">保存修改</button>
         </div>
     </div>
 
-    <!-- 图片裁剪弹窗（默认隐藏） -->
+    <!-- 图片裁剪弹窗 - 移动端深度优化 -->
     <div class="modal" id="crop-image-modal" style="display: none;">
-        <div class="modal-content crop-modal-content">
-            <span class="close-modal crop-close-modal">&times;</span>
-            <h3>裁剪菜品图片</h3>
-            <div class="crop-container">
-                <img id="crop-image" alt="待裁剪图片">
+        <div class="modal-content crop-modal-content mobile-crop-modal">
+            <span class="close-modal crop-close-modal mobile-close">&times;</span>
+            <h3>裁剪图片</h3>
+            <div class="crop-container mobile-crop-container">
+                <img id="crop-image" alt="待裁剪图片" class="mobile-crop-img">
             </div>
             <div class="crop-controls">
-                <button id="confirm-crop-btn">确认裁剪</button>
+                <button id="confirm-crop-btn" class="mobile-primary-btn">确认裁剪</button>
             </div>
         </div>
     </div>
