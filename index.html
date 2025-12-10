@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>在线点菜系统 - 可管理菜品</title>
+    <title>文菲菲专属点菜系统</title>
     <link rel="stylesheet" href="style.css">
+    <!-- 引入html2canvas库（用于生成图片） -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -50,6 +52,33 @@
         <div class="order-summary">
             <h3>订单总价：<span id="total-price">¥0</span></h3>
             <button id="submit-order">提交订单</button>
+        </div>
+
+        <!-- 新增：订单菜单预览区（默认隐藏） -->
+        <div class="order-preview" id="order-preview" style="display: none;">
+            <h3>您的点单菜单</h3>
+            <!-- 菜单内容容器（用于生成图片） -->
+            <div class="menu-card" id="menu-card">
+                <div class="menu-header">
+                    <h2>我的餐厅 - 点单清单</h2>
+                    <p class="order-time" id="order-time"></p>
+                </div>
+                <div class="menu-body" id="menu-body">
+                    <!-- 已选菜品会动态渲染到这里 -->
+                </div>
+                <div class="menu-footer">
+                    <p>总计：<span id="menu-total">¥0</span></p>
+                    <p>份数：<span id="menu-count">0</span>份</p>
+                </div>
+            </div>
+            <!-- 生成图片按钮 -->
+            <button id="generate-image">生成菜单图片</button>
+            <!-- 图片预览区 -->
+            <div class="image-preview" id="image-preview" style="display: none;">
+                <h4>菜单图片预览</h4>
+                <img id="menu-image" alt="点单菜单图片">
+                <button id="download-image">下载图片</button>
+            </div>
         </div>
     </div>
 
