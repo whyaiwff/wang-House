@@ -2,21 +2,30 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 核心移动端视口优化 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <title>文菲菲的餐厅</title>
+    <title>在线点菜系统 - 数据模块化</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- 先引入数据模块 -->
+    <script src="dishData.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>文菲菲的餐厅</h1>
+        <h1>我的餐厅 - 在线点菜</h1>
         
-        <!-- 菜品管理区 - 移动端优化 -->
+        <!-- 数据管理区 -->
+        <div class="data-manager">
+            <button id="clear-data" class="mobile-btn">清空所有数据</button>
+            <button id="export-data" class="mobile-btn">导出数据</button>
+            <button id="import-data" class="mobile-btn">导入数据</button>
+            <input type="file" id="data-import-file" accept=".json" hidden>
+        </div>
+        
+        <!-- 菜品管理区 -->
         <div class="dish-manager">
             <h3>菜品管理</h3>
             <div class="add-dish-form">
@@ -27,7 +36,6 @@
                     <option value="cold">凉菜</option>
                     <option value="snack">小吃</option>
                 </select>
-                <!-- 菜品图片上传 - 移动端优化 -->
                 <div class="image-upload">
                     <label for="new-dish-image" class="upload-btn">选择图片</label>
                     <input type="file" id="new-dish-image" accept="image/*" hidden capture="camera">
@@ -37,7 +45,7 @@
             </div>
         </div>
 
-        <!-- 批量操作区 - 移动端优化 -->
+        <!-- 批量操作区 -->
         <div class="batch-controls">
             <button id="select-all" class="mobile-btn">全选(+1)</button>
             <button id="minus-all" class="mobile-btn">全部-1</button>
@@ -47,15 +55,12 @@
 
         <!-- 主布局容器 -->
         <div class="main-layout">
-            <!-- 左侧分类栏 - 移动端优化 -->
             <div class="category-sidebar">
                 <button class="tab active mobile-tab" data-category="all">全部</button>
                 <button class="tab mobile-tab" data-category="hot">热菜</button>
                 <button class="tab mobile-tab" data-category="cold">凉菜</button>
                 <button class="tab mobile-tab" data-category="snack">小吃</button>
             </div>
-
-            <!-- 右侧菜品内容区 - 移动端优化 -->
             <div class="dish-content">
                 <div class="menu" id="dish-list">
                     <!-- 菜品会通过JS动态渲染到这里 -->
@@ -63,18 +68,18 @@
             </div>
         </div>
 
-        <!-- 订单汇总 - 移动端优化 -->
+        <!-- 订单汇总 -->
         <div class="order-summary">
             <h3>总价：<span id="total-price">¥0</span></h3>
             <button id="submit-order" class="mobile-primary-btn">提交订单</button>
         </div>
 
-        <!-- 订单菜单预览区 - 移动端优化 -->
+        <!-- 订单菜单预览区 -->
         <div class="order-preview" id="order-preview" style="display: none;">
             <h3>您的点单菜单</h3>
             <div class="menu-card" id="menu-card">
                 <div class="menu-header">
-                    <h2>文菲菲的餐厅</h2>
+                    <h2>我的餐厅</h2>
                     <p class="order-time" id="order-time"></p>
                 </div>
                 <div class="menu-body" id="menu-body">
@@ -94,7 +99,7 @@
         </div>
     </div>
 
-    <!-- 菜品编辑弹窗 - 移动端优化 -->
+    <!-- 菜品编辑弹窗 -->
     <div class="modal" id="edit-dish-modal" style="display: none;">
         <div class="modal-content mobile-modal">
             <span class="close-modal mobile-close">&times;</span>
@@ -116,7 +121,6 @@
                     <option value="snack">小吃</option>
                 </select>
             </div>
-            <!-- 编辑菜品图片 - 移动端优化 -->
             <div class="modal-form-item">
                 <label>菜品图片：</label>
                 <div class="image-upload">
@@ -130,7 +134,7 @@
         </div>
     </div>
 
-    <!-- 图片裁剪弹窗 - 移动端深度优化 -->
+    <!-- 图片裁剪弹窗 -->
     <div class="modal" id="crop-image-modal" style="display: none;">
         <div class="modal-content crop-modal-content mobile-crop-modal">
             <span class="close-modal crop-close-modal mobile-close">&times;</span>
