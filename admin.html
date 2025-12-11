@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>后台管理 - 山野书屋点餐系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
     <style>
         * {
             margin: 0;
@@ -148,7 +148,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>后台管理 - 山野书屋点餐系统</h1>
+            <h1>后台管理 - 王焕胤的用武之地</h1>
         </header>
         
         <div class="admin-controls">
@@ -157,7 +157,7 @@
             <button class="btn btn-secondary" onclick="exportMenu()">导出菜品数据</button>
             <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">导入菜品数据</button>
             <input type="file" id="importFile" accept=".json,.csv" style="display: none;" onchange="importMenu(event)">
-            <button class="btn" onclick="window.location.href='index.html'">返回点餐页面</button>
+            <button class="btn" onclick="window.location.href='index.html'">我要点餐</button>
         </div>
         
         <!-- 分类管理表格 -->
@@ -181,7 +181,7 @@
                     <th>ID</th>
                     <th>名称</th>
                     <th>价格</th>
-                    <th>月售</th>
+                    <th>已售</th>
                     <th>分类</th>
                     <th>描述</th>
                     <th>图片</th>
@@ -213,7 +213,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="menuSales">月售</label>
+                    <label for="menuSales">已售</label>
                     <input type="number" id="menuSales" min="0" required>
                 </div>
                 
@@ -231,8 +231,16 @@
                 
                 <div class="form-group">
                     <label for="menuImage">图片</label>
-                    <input type="file" id="menuImage" accept="image/*" onchange="previewImage(event)">
+                    <input type="file" id="menuImage" accept="image/*" onchange="handleImageSelect(event)">
                     <div id="imagePreview" style="margin-top: 10px;"></div>
+                    <!-- 图片裁剪区域 -->
+                    <div id="cropperContainer" style="display: none; margin-top: 10px;">
+                        <img id="cropperImage" style="max-width: 100%;">
+                        <div style="margin-top: 10px;">
+                            <button type="button" class="btn btn-primary" onclick="cropImage()">裁剪</button>
+                            <button type="button" class="btn" onclick="cancelCrop()">取消裁剪</button>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -274,10 +282,10 @@
                 if (categories.length === 0) {
                     // 初始化默认分类
                     const defaultCategories = [
-                        { id: 1, name: '小吃' },
-                        { id: 2, name: '咖啡' },
-                        { id: 3, name: '茶类' },
-                        { id: 4, name: '冰饮' },
+                        { id: 1, name: '热菜' },
+                        { id: 2, name: '凉菜' },
+                        { id: 3, name: '小吃' },
+                        { id: 4, name: '饮料' },
                         { id: 5, name: '套餐' }
                     ];
                     saveCategories(defaultCategories);
@@ -417,21 +425,95 @@
                 });
             }
         
-        // 图片预览函数
-        function previewImage(event) {
+        // 图片裁剪对象
+        let cropper = null;
+        
+        // 处理图片选择
+        function handleImageSelect(event) {
             const file = event.target.files[0];
             const preview = document.getElementById('imagePreview');
+            const cropperContainer = document.getElementById('cropperContainer');
+            const cropperImage = document.getElementById('cropperImage');
             
             if (file) {
                 const reader = new FileReader();
                 
                 reader.onload = function(e) {
-                    preview.innerHTML = `<img src="${e.target.result}" alt="图片预览" style="max-width: 100%; max-height: 200px;">`;
+                    // 显示裁剪界面
+                    preview.innerHTML = '';
+                    cropperContainer.style.display = 'block';
+                    
+                    // 设置裁剪图片
+                    cropperImage.src = e.target.result;
+                    
+                    // 初始化裁剪器
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    
+                    cropper = new Cropper(cropperImage, {
+                        aspectRatio: 1, // 1:1比例，可根据需要调整
+                        viewMode: 1,
+                        guides: true,
+                        center: true,
+                        autoCropArea: 0.8,
+                        zoomable: true,
+                        movable: true,
+                        cropBoxResizable: true
+                    });
                 }
                 
                 reader.readAsDataURL(file);
             } else {
+                // 清除预览和裁剪
                 preview.innerHTML = '';
+                cropperContainer.style.display = 'none';
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+            }
+        }
+        
+        // 裁剪图片
+        function cropImage() {
+            if (cropper) {
+                // 获取裁剪后的图片数据
+                const croppedCanvas = cropper.getCroppedCanvas({
+                    width: 150,
+                    height: 150
+                });
+                
+                // 转换为Base64格式
+                const croppedImageData = croppedCanvas.toDataURL('image/jpeg');
+                
+                // 显示裁剪后的图片
+                const preview = document.getElementById('imagePreview');
+                const cropperContainer = document.getElementById('cropperContainer');
+                
+                preview.innerHTML = `<img src="${croppedImageData}" alt="裁剪后预览" style="max-width: 100%; max-height: 200px;">`;
+                
+                // 隐藏裁剪界面
+                cropperContainer.style.display = 'none';
+                cropper.destroy();
+                cropper = null;
+            }
+        }
+        
+        // 取消裁剪
+        function cancelCrop() {
+            const preview = document.getElementById('imagePreview');
+            const cropperContainer = document.getElementById('cropperContainer');
+            const fileInput = document.getElementById('menuImage');
+            
+            // 清除选择和裁剪
+            fileInput.value = '';
+            preview.innerHTML = '';
+            cropperContainer.style.display = 'none';
+            
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
             }
         }
         
@@ -480,11 +562,16 @@
             const category = document.getElementById('menuCategory').value;
             const description = document.getElementById('menuDescription').value;
             const fileInput = document.getElementById('menuImage');
+            const preview = document.getElementById('imagePreview');
             
             let menuItems = JSON.parse(localStorage.getItem('menuItems') || '[]');
             
-            if (fileInput.files.length > 0) {
-                // 如果选择了新图片，将其转换为Base64
+            if (preview.children.length > 0) {
+                // 如果有预览图片（裁剪后的）
+                const imageData = preview.children[0].src;
+                saveMenuData(id, name, price, sales, category, description, imageData, menuItems);
+            } else if (fileInput.files.length > 0) {
+                // 如果选择了新图片但还没裁剪，直接使用
                 const reader = new FileReader();
                 
                 reader.onload = function(e) {
@@ -530,6 +617,19 @@
         // 关闭模态框
         function closeModal() {
             document.getElementById('menuModal').style.display = 'none';
+            // 重置裁剪相关元素
+            const fileInput = document.getElementById('menuImage');
+            const preview = document.getElementById('imagePreview');
+            const cropperContainer = document.getElementById('cropperContainer');
+            
+            fileInput.value = '';
+            preview.innerHTML = '';
+            cropperContainer.style.display = 'none';
+            
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
         }
         
         // 删除菜品
@@ -603,5 +703,6 @@
             loadMenuTable();
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 </body>
 </html>
