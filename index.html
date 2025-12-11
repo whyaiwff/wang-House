@@ -19,13 +19,13 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
         }
         
         /* 页面标题 - 固定在顶部 */
         header {
             background-color: #fff;
-            padding: 15px 20px;
+            padding: 15px 15px;
             border-bottom: 1px solid #e0e0e0;
             display: flex;
             justify-content: space-between;
@@ -38,7 +38,7 @@
         }
         
         header h1 {
-            font-size: 24px;
+            font-size: 20px;
             color: #333;
         }
         
@@ -56,9 +56,9 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             padding: 15px;
             position: fixed;
-            left: 20px;
+            left: 15px;
             top: 80px;
-            bottom: 20px;
+            bottom: 15px;
             overflow-y: auto;
         }
         
@@ -96,10 +96,6 @@
             color: white;
         }
         
-        .menu-content {
-            flex: 1;
-        }
-        
         /* 搜索栏 - 固定在header下方 */
         .search-bar {
             display: flex;
@@ -107,8 +103,8 @@
             margin-bottom: 20px;
             position: fixed;
             top: 80px;
-            left: 240px;
-            right: 20px;
+            left: 225px;
+            right: 15px;
             background-color: #fff;
             padding: 10px 0;
             z-index: 999;
@@ -118,7 +114,8 @@
             padding: 10px 15px;
             border: 1px solid #ddd;
             border-radius: 20px;
-            width: 300px;
+            flex: 1;
+            max-width: 300px;
             margin-right: 10px;
         }
         
@@ -214,8 +211,8 @@
         
         .admin-button {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 15px;
+            right: 15px;
             background-color: #2196F3;
             color: white;
             padding: 15px;
@@ -223,13 +220,14 @@
             font-size: 20px;
             cursor: pointer;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 999;
         }
         
         /* 购物车相关样式 */
         .fixed-cart-button {
             position: fixed;
             bottom: 90px;
-            right: 20px;
+            right: 15px;
             padding: 15px 20px;
             background-color: #f44336;
             color: white;
@@ -385,6 +383,134 @@
         
         .btn-danger:hover {
             background-color: #d32f2f;
+        }
+        
+        /* 响应式设计 */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 12px 10px;
+            }
+            
+            header h1 {
+                font-size: 18px;
+            }
+            
+            /* 分类侧边栏改为顶部水平滚动 */
+            .category-sidebar {
+                position: fixed;
+                top: 65px;
+                left: 0;
+                right: 0;
+                width: 100%;
+                height: auto;
+                padding: 10px;
+                border-radius: 0;
+                z-index: 998;
+            }
+            
+            .category-sidebar h3 {
+                display: none;
+            }
+            
+            .category-list {
+                display: flex;
+                gap: 10px;
+                overflow-x: auto;
+                padding-bottom: 5px;
+            }
+            
+            .category-item {
+                white-space: nowrap;
+                padding: 8px 15px;
+                margin-bottom: 0;
+            }
+            
+            /* 菜品内容区域调整 */
+            .menu-content {
+                margin-left: 0;
+                margin-top: 140px;
+            }
+            
+            /* 搜索栏改为正常流 */
+            .search-bar {
+                position: static;
+                margin: 15px 0;
+                padding: 0;
+            }
+            
+            .search-bar input {
+                max-width: none;
+                margin-right: 8px;
+            }
+            
+            /* 菜品网格 */
+            .menu-grid {
+                margin-top: 15px;
+            }
+            
+            .menu-item {
+                flex-direction: column;
+                padding: 15px;
+            }
+            
+            .menu-item img {
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+                object-fit: cover;
+            }
+            
+            /* 购物车按钮调整 */
+            .fixed-cart-button {
+                bottom: 80px;
+                right: 10px;
+                padding: 12px 18px;
+                font-size: 14px;
+            }
+            
+            .admin-button {
+                bottom: 10px;
+                right: 10px;
+                padding: 12px;
+                font-size: 18px;
+            }
+            
+            /* 模态框调整 */
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+                padding: 15px;
+            }
+            
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .cart-item-quantity {
+                align-self: flex-end;
+            }
+            
+            .cart-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+        
+        /* 平板设备优化 */
+        @media screen and (min-width: 769px) and (max-width: 1024px) {
+            .search-bar input {
+                max-width: 250px;
+            }
         }
     </style>
 </head>
