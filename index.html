@@ -64,7 +64,7 @@
         
         /* 菜品内容区域 - 调整左边距以适应固定的分类栏，上边距适应固定的header */
         .menu-content {
-            margin-left: 85px;
+            margin-left: 140px;
             flex: 1;
             margin-top: 80px;
         }
@@ -151,8 +151,8 @@
         }
         
         .menu-item img {
-            width: 60px;
-            height: 60px;
+            width: 100px;
+            height: 100px;
             object-fit: cover;
             border-radius: 8px;
         }
@@ -427,14 +427,14 @@
             
             /* 菜品内容区域调整 */
             .menu-content {
-                margin-left: 85px;
+                margin-left: 90px;
                 margin-top: 70px;
             }
             
             /* 搜索栏保持固定位置，调整大小 */
             .search-bar {
                 top: 60px;
-                left: 135px;
+                left: 90px;
                 right: 6px;
                 padding: 4px 0;
             }
@@ -610,60 +610,60 @@
                     { id: 2, name: '咖啡' },
                     { id: 3, name: '茶类' },
                     { id: 4, name: '冰饮' },
-                    { id: 5, name: '套餐' }
+                    { id: 5, name: '套餐' },
+                    { id: 6, name: '饮料' }
                 ];
                 localStorage.setItem('categories', JSON.stringify(defaultCategories));
             }
             
+            // 如果localStorage中没有菜品数据，尝试从menu_data.json文件加载
             if (!localStorage.getItem('menuItems')) {
-                const sampleMenu = [
-                    {
-                        id: 1,
-                        name: '薯条',
-                        price: 24,
-                        sales: 0, // 已售从零开始计数
-                        image: 'http://via.placeholder.com/150x150?text=薯条',
-                        description: '香脆可口的薯条',
-                        category: '小吃'
-                    },
-                    {
-                        id: 2,
-                        name: '拿铁',
-                        price: 36,
-                        sales: 0, // 已售从零开始计数
-                        image: 'http://via.placeholder.com/150x150?text=拿铁',
-                        description: '香浓的拿铁咖啡',
-                        category: '咖啡'
-                    },
-                    {
-                        id: 3,
-                        name: '滇红茶',
-                        price: 38,
-                        sales: 0, // 已售从零开始计数
-                        image: 'http://via.placeholder.com/150x150?text=滇红茶',
-                        description: '醇厚的滇红茶',
-                        category: '茶类'
-                    },
-                    {
-                        id: 4,
-                        name: '橙C美式',
-                        price: 26,
-                        sales: 0, // 已售从零开始计数
-                        image: 'http://via.placeholder.com/150x150?text=橙C美式',
-                        description: '清爽的橙C美式',
-                        category: '咖啡'
-                    },
-                    {
-                        id: 5,
-                        name: '草莓乳酪星冰乐',
-                        price: 32,
-                        sales: 0, // 已售从零开始计数
-                        image: 'http://via.placeholder.com/150x150?text=草莓乳酪星冰乐',
-                        description: '酸甜可口的星冰乐',
-                        category: '冰饮'
-                    }
-                ];
-                localStorage.setItem('menuItems', JSON.stringify(sampleMenu));
+                fetch('menu_data.json')
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error('Failed to load menu data');
+                        }
+                    })
+                    .then(data => {
+                        // 从文件加载数据成功
+                        localStorage.setItem('menuItems', JSON.stringify(data));
+                    })
+                    .catch(error => {
+                        // 加载失败，使用默认示例数据
+                        console.log('无法加载menu_data.json文件，使用默认示例数据:', error);
+                        const sampleMenu = [
+                            {
+                                id: 1,
+                                name: '薯条',
+                                price: 24,
+                                sales: 0, // 已售从零开始计数
+                                image: 'http://via.placeholder.com/150x150?text=薯条',
+                                description: '香脆可口的薯条',
+                                category: '小吃'
+                            },
+                            {
+                                id: 2,
+                                name: '汉堡',
+                                price: 38,
+                                sales: 0,
+                                image: 'http://via.placeholder.com/150x150?text=汉堡',
+                                description: '美味的牛肉汉堡',
+                                category: '小吃'
+                            },
+                            {
+                                id: 3,
+                                name: '可乐',
+                                price: 12,
+                                sales: 0,
+                                image: 'http://via.placeholder.com/150x150?text=可乐',
+                                description: '冰爽可乐',
+                                category: '饮料'
+                            }
+                        ];
+                        localStorage.setItem('menuItems', JSON.stringify(sampleMenu));
+                    });
             }
         }
         
@@ -1239,5 +1239,4 @@
         loadMenu();
     </script>
 </body>
-
 </html>

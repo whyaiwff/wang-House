@@ -1,0 +1,110 @@
+[
+    {
+        "id": 1,
+        "name": "薯条",
+        "price": 24,
+        "sales": 0,
+        "image": "http://via.placeholder.com/150x150?text=薯条",
+        "description": "香脆可口的薯条",
+        "category": "小吃"
+    },
+    {
+        "id": 2,
+        "name": "汉堡",
+        "price": 38,
+        "sales": 0,
+        "image": "http://via.placeholder.com/150x150?text=汉堡",
+        "description": "美味的牛肉汉堡",
+        "category": "小吃"
+    },
+    {
+        "id": 3,
+        "name": "可乐",
+        "price": 12,
+        "sales": 0,
+        "image": "http://via.placeholder.com/150x150?text=可乐",
+        "description": "冰爽可乐",
+        "category": "饮料"
+    },
+    {
+        "id": 4,
+        "name": "拿铁咖啡",
+        "price": 28,
+        "sales": 0,
+        "image": "http://via.placeholder.com/150x150?text=拿铁咖啡",
+        "description": "香浓拿铁咖啡",
+        "category": "咖啡"
+    },
+    {
+        "id": 5,
+        "name": "美式咖啡",
+        "price": 22,
+        "sales": 0,
+        "image": "http://via.placeholder.com/150x150?text=美式咖啡",
+        "description": "经典美式咖啡",
+        "category": "咖啡"
+    },
+    {
+        "id": 6,
+        "name": "卡布奇诺",
+        "price": 30,
+        "sales": 0,
+        "image": "http://via.placeholder.com/150x150?text=卡布奇诺",
+        "description": "泡沫丰富的卡布奇诺",
+        "category": "咖啡"
+    },
+    {
+        "id": 7,
+        "name": "抹茶拿铁",
+        "price": 32,
+        "sales": 0,
+        "image": "http://via.placeholder.com/150x150?text=抹茶拿铁",
+        "description": "清新抹茶拿铁",
+        "category": "茶类"
+    },
+    {
+        "id": 8,
+        "name": "珍珠奶茶",
+        "price": 26,
+        "sales": 0,
+        "image": "http://via.placeholder.com/150x150?text=珍珠奶茶",
+        "description": "Q弹珍珠奶茶",
+        "category": "茶类"
+    },
+    {
+        "id": 9,
+        "name": "草莓冰沙",
+        "price": 35,
+        "sales": 0,
+        "image": "http://via.placeholder.com/150x150?text=草莓冰沙",
+        "description": "酸甜草莓冰沙",
+        "category": "冰饮"
+    },
+    {
+        "id": 10,
+        "name": "芒果冰沙",
+        "price": 35,
+        "sales": 0,
+        "image": "http://via.placeholder.com/150x150?text=芒果冰沙",
+        "description": "香甜芒果冰沙",
+        "category": "冰饮"
+    },
+    {
+        "id": 11,
+        "name": "单人套餐A",
+        "price": 58,
+        "sales": 0,
+        "image": "http://via.placeholder.com/150x150?text=单人套餐A",
+        "description": "汉堡+薯条+可乐",
+        "category": "套餐"
+    },
+    {
+        "id": 12,
+        "name": "双人套餐B",
+        "price": 118,
+        "sales": 0,
+        "image": "http://via.placeholder.com/150x150?text=双人套餐B",
+        "description": "2个汉堡+2份薯条+2杯可乐",
+        "category": "套餐"
+    }
+]

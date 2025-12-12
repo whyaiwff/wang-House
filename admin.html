@@ -227,6 +227,7 @@
             <button class="btn btn-secondary" onclick="exportMenu()">导出菜品数据</button>
             <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">导入菜品数据</button>
             <input type="file" id="importFile" accept=".json,.csv" style="display: none;" onchange="importMenu(event)">
+            <button class="btn btn-secondary" onclick="loadMenuFromFile()">从云端加载数据</button>
             <button class="btn" onclick="window.location.href='index.html'">我要点餐</button>
         </div>
         
@@ -748,6 +749,34 @@
                 }
             };
             reader.readAsText(file);
+        }
+        
+        // 从menu_data.json文件加载数据
+        function loadMenuFromFile() {
+            fetch('menu_data.json')
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('无法加载menu_data.json文件');
+                    }
+                })
+                .then(data => {
+                    // 验证数据格式
+                    if (Array.isArray(data)) {
+                        // 保存到localStorage
+                        localStorage.setItem('menuItems', JSON.stringify(data));
+                        // 更新菜品表格
+                        loadMenuTable();
+                        alert('从文件加载数据成功！');
+                    } else {
+                        alert('menu_data.json文件格式不正确！');
+                    }
+                })
+                .catch(error => {
+                    console.error('加载文件失败:', error);
+                    alert('加载文件失败：' + error.message);
+                });
         }
         
         // 点击模态框外部关闭模态框
