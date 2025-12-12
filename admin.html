@@ -412,29 +412,44 @@
                 document.getElementById('addCategoryModal').style.display = 'none';
             }
 
-            document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
+            // 分类表单提交处理
+            function handleCategorySubmit(e) {
                 e.preventDefault();
                 const id = document.getElementById('categoryId').value;
                 const name = document.getElementById('categoryName').value;
                 const categories = getCategories();
+                
+                console.log('添加/编辑分类 - 原始数据:', categories);
+                console.log('添加/编辑分类 - ID:', id, '名称:', name);
 
                 if (id) {
                     // 编辑分类
                     categories[id] = { id: categories[id].id, name: name };
                     saveCategories(categories);
+                    console.log('分类更新成功 - 新数据:', categories);
                     alert('分类更新成功！');
                 } else {
                     // 添加分类
                     const newId = categories.length > 0 ? Math.max(...categories.map(c => c.id)) + 1 : 1;
                     categories.push({ id: newId, name: name });
                     saveCategories(categories);
+                    console.log('分类添加成功 - 新数据:', categories);
                     alert('分类添加成功！');
                 }
 
                 closeAddCategoryModal();
                 loadCategoryTable();
                 updateMenuCategoryOptions();
-            });
+            }
+
+            // 添加表单提交事件监听器
+            const addCategoryForm = document.getElementById('addCategoryForm');
+            addCategoryForm.addEventListener('submit', handleCategorySubmit);
+            // 添加触摸事件支持（针对移动端）
+            addCategoryForm.addEventListener('touchstart', function(e) {
+                // 防止触摸事件干扰表单提交
+                e.preventDefault();
+            }, { passive: false });
 
             function editCategory(index) {
                 const categories = getCategories();
@@ -618,7 +633,8 @@
         }
         
         // 保存菜品
-        document.getElementById('menuForm').addEventListener('submit', function(e) {
+        // 菜品表单提交处理
+        function handleMenuSubmit(e) {
             e.preventDefault();
             
             const id = parseInt(document.getElementById('menuId').value);
@@ -648,7 +664,9 @@
             } else {
                 // 如果没有选择新图片，使用现有图片（编辑时）
                 if (id) {
-                    const existingItem = menuItems.find(i => i.id === id);
+                    // 确保id是数字类型进行比较
+                    const numericId = parseInt(id);
+                    const existingItem = menuItems.find(i => i.id === numericId);
                     if (existingItem) {
                         saveMenuData(id, name, price, category, description, existingItem.image, menuItems);
                     }
@@ -658,23 +676,44 @@
                     saveMenuData(id, name, price, category, description, defaultImage, menuItems);
                 }
             }
-        });
+        }
+        
+        // 添加表单提交事件监听器
+        const menuForm = document.getElementById('menuForm');
+        menuForm.addEventListener('submit', handleMenuSubmit);
+        // 添加触摸事件支持（针对移动端）
+        menuForm.addEventListener('touchstart', function(e) {
+            // 防止触摸事件干扰表单提交
+            e.preventDefault();
+        }, { passive: false });
         
         // 保存菜品数据
         function saveMenuData(id, name, price, category, description, image, menuItems) {
-            if (id) {
+            console.log('保存菜品 - 原始数据:', menuItems);
+            console.log('保存菜品 - 参数:', id, name, price, category, description, image);
+            
+            // 确保id是数字类型
+            const numericId = id ? parseInt(id) : null;
+            
+            if (numericId) {
                 // 编辑现有菜品
-                const index = menuItems.findIndex(i => i.id === id);
+                const index = menuItems.findIndex(i => i.id === numericId);
                 if (index !== -1) {
-                    menuItems[index] = {id, name, price, category, description, image};
+                    menuItems[index] = {id: numericId, name, price, category, description, image};
+                    console.log('编辑菜品成功 - 索引:', index);
+                } else {
+                    console.log('编辑菜品失败 - 未找到ID:', numericId);
                 }
             } else {
                 // 添加新菜品
                 const newId = menuItems.length > 0 ? Math.max(...menuItems.map(i => i.id)) + 1 : 1;
                 menuItems.push({id: newId, name, price, category, description, image});
+                console.log('添加菜品成功 - 新ID:', newId);
             }
             
+            console.log('保存菜品 - 更新后数据:', menuItems);
             localStorage.setItem('menuItems', JSON.stringify(menuItems));
+            console.log('保存到localStorage成功');
             
             loadMenuTable();
             closeModal();
@@ -803,9 +842,15 @@
         
         // 点击模态框外部关闭模态框
         window.onclick = function(event) {
-            const modal = document.getElementById('menuModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
+            const menuModal = document.getElementById('menuModal');
+            const categoryModal = document.getElementById('addCategoryModal');
+            
+            if (event.target == menuModal) {
+                menuModal.style.display = 'none';
+            }
+            
+            if (event.target == categoryModal) {
+                categoryModal.style.display = 'none';
             }
         }
         
