@@ -449,12 +449,25 @@
                     row.addEventListener('dragover', handleCategoryDragOver);
                     row.addEventListener('drop', handleCategoryDrop);
                     
+                    // 添加触摸事件监听器
+                    row.addEventListener('touchstart', handleCategoryTouchStart);
+                    row.addEventListener('touchmove', handleCategoryTouchMove);
+                    row.addEventListener('touchend', handleCategoryTouchEnd);
+                    
                     tbody.appendChild(row);
                 });
             }
 
             // 分类拖动排序相关变量
             let draggedCategory = null;
+            
+            // 分类触摸拖动相关变量
+            let isCategoryDragging = false;
+            let categoryStartY = 0;
+            let categoryCurrentY = 0;
+            let draggedCategoryRow = null;
+            let draggedCategoryIndex = 0;
+            let targetCategoryIndex = 0;
 
             // 处理分类拖动开始
             function handleCategoryDragStart(e) {
@@ -501,6 +514,106 @@
                 
                 // 重置样式
                 targetRow.style.backgroundColor = '';
+            }
+            
+            // 分类触摸事件处理函数
+            function handleCategoryTouchStart(e) {
+                e.preventDefault();
+                
+                // 标记为开始拖动
+                isCategoryDragging = true;
+                
+                // 获取触摸点的初始位置
+                categoryStartY = e.touches[0].clientY;
+                
+                // 记录被拖动的行
+                draggedCategoryRow = this;
+                draggedCategoryIndex = Array.from(this.parentNode.children).indexOf(this);
+                
+                // 设置拖动时的样式
+                draggedCategoryRow.style.opacity = '0.5';
+                draggedCategoryRow.style.position = 'relative';
+                draggedCategoryRow.style.zIndex = '1000';
+            }
+            
+            function handleCategoryTouchMove(e) {
+                e.preventDefault();
+                
+                if (!isCategoryDragging || !draggedCategoryRow) return;
+                
+                // 获取当前触摸点的位置
+                categoryCurrentY = e.touches[0].clientY;
+                
+                // 计算拖动的距离
+                const deltaY = categoryCurrentY - categoryStartY;
+                
+                // 移动被拖动的行
+                draggedCategoryRow.style.transform = `translateY(${deltaY}px)`;
+                
+                // 确定目标行
+                const tableRows = Array.from(draggedCategoryRow.parentNode.children);
+                
+                // 遍历所有行，找到当前触摸点下方的行
+                for (let i = 0; i < tableRows.length; i++) {
+                    const row = tableRows[i];
+                    const rect = row.getBoundingClientRect();
+                    
+                    if (categoryCurrentY >= rect.top && categoryCurrentY <= rect.bottom) {
+                        targetCategoryIndex = i;
+                        break;
+                    }
+                }
+                
+                // 高亮显示目标行
+                tableRows.forEach((row, index) => {
+                    if (index === targetCategoryIndex) {
+                        row.style.backgroundColor = '#f0f0f0';
+                    } else {
+                        row.style.backgroundColor = '';
+                    }
+                });
+            }
+            
+            function handleCategoryTouchEnd(e) {
+                e.preventDefault();
+                
+                if (!isCategoryDragging || !draggedCategoryRow) return;
+                
+                // 重置拖动状态
+                isCategoryDragging = false;
+                
+                // 重置被拖动行的样式
+                draggedCategoryRow.style.opacity = '1';
+                draggedCategoryRow.style.transform = '';
+                draggedCategoryRow.style.position = '';
+                draggedCategoryRow.style.zIndex = '';
+                
+                // 获取当前分类数据
+                let categories = loadCategories();
+                
+                // 重新排序数组
+                if (draggedCategoryIndex !== targetCategoryIndex) {
+                    const [movedItem] = categories.splice(draggedCategoryIndex, 1);
+                    categories.splice(targetCategoryIndex, 0, movedItem);
+                    
+                    // 更新localStorage
+                    localStorage.setItem('categories', JSON.stringify(categories));
+                    
+                    // 重新渲染表格
+                    loadCategoryTable(categories);
+                    
+                    // 更新菜单中的分类选项
+                    updateMenuCategoryOptions();
+                } else {
+                    // 重置所有行的样式
+                    const tableRows = Array.from(draggedCategoryRow.parentNode.children);
+                    tableRows.forEach(row => {
+                        row.style.backgroundColor = '';
+                    });
+                }
+                
+                // 清除引用
+                draggedCategoryRow = null;
             }
 
             function updateMenuCategoryOptions() {
@@ -644,12 +757,25 @@
                     row.addEventListener('dragover', handleDragOver);
                     row.addEventListener('drop', handleDrop);
                     
+                    // 添加触摸事件监听器（移动端支持）
+                    row.addEventListener('touchstart', handleTouchStart, { passive: false });
+                    row.addEventListener('touchmove', handleTouchMove, { passive: false });
+                    row.addEventListener('touchend', handleTouchEnd);
+                    
                     tableBody.appendChild(row);
                 });
             }
 
             // 拖动排序相关变量
             let draggedItem = null;
+            
+            // 触摸事件相关变量
+            let isDragging = false;
+            let startY = 0;
+            let currentY = 0;
+            let draggedRow = null;
+            let draggedRowIndex = 0;
+            let targetRowIndex = 0;
 
             // 处理拖动开始
             function handleDragStart(e) {
@@ -693,6 +819,103 @@
                 
                 // 重置样式
                 targetRow.style.backgroundColor = '';
+            }
+            
+            // 触摸事件处理函数
+            function handleTouchStart(e) {
+                e.preventDefault();
+                
+                // 标记为开始拖动
+                isDragging = true;
+                
+                // 获取触摸点的初始位置
+                startY = e.touches[0].clientY;
+                
+                // 记录被拖动的行
+                draggedRow = this;
+                draggedRowIndex = Array.from(this.parentNode.children).indexOf(this);
+                
+                // 设置拖动时的样式
+                draggedRow.style.opacity = '0.5';
+                draggedRow.style.position = 'relative';
+                draggedRow.style.zIndex = '1000';
+            }
+            
+            function handleTouchMove(e) {
+                e.preventDefault();
+                
+                if (!isDragging || !draggedRow) return;
+                
+                // 获取当前触摸点的位置
+                currentY = e.touches[0].clientY;
+                
+                // 计算拖动的距离
+                const deltaY = currentY - startY;
+                
+                // 移动被拖动的行
+                draggedRow.style.transform = `translateY(${deltaY}px)`;
+                
+                // 确定目标行
+                const tableRows = Array.from(draggedRow.parentNode.children);
+                
+                // 遍历所有行，找到当前触摸点下方的行
+                for (let i = 0; i < tableRows.length; i++) {
+                    const row = tableRows[i];
+                    const rect = row.getBoundingClientRect();
+                    
+                    if (currentY >= rect.top && currentY <= rect.bottom) {
+                        targetRowIndex = i;
+                        break;
+                    }
+                }
+                
+                // 高亮显示目标行
+                tableRows.forEach((row, index) => {
+                    if (index === targetRowIndex) {
+                        row.style.backgroundColor = '#f0f0f0';
+                    } else {
+                        row.style.backgroundColor = '';
+                    }
+                });
+            }
+            
+            function handleTouchEnd(e) {
+                e.preventDefault();
+                
+                if (!isDragging || !draggedRow) return;
+                
+                // 重置拖动状态
+                isDragging = false;
+                
+                // 重置被拖动行的样式
+                draggedRow.style.opacity = '1';
+                draggedRow.style.transform = '';
+                draggedRow.style.position = '';
+                draggedRow.style.zIndex = '';
+                
+                // 获取当前菜品数据
+                let menuItems = JSON.parse(localStorage.getItem('menuItems') || '[]');
+                
+                // 重新排序数组
+                if (draggedRowIndex !== targetRowIndex) {
+                    const [movedItem] = menuItems.splice(draggedRowIndex, 1);
+                    menuItems.splice(targetRowIndex, 0, movedItem);
+                    
+                    // 更新localStorage
+                    localStorage.setItem('menuItems', JSON.stringify(menuItems));
+                    
+                    // 重新渲染表格
+                    loadMenuTable(menuItems);
+                } else {
+                    // 重置所有行的样式
+                    const tableRows = Array.from(draggedRow.parentNode.children);
+                    tableRows.forEach(row => {
+                        row.style.backgroundColor = '';
+                    });
+                }
+                
+                // 清除引用
+                draggedRow = null;
             }
 
             // 按指定字段排序菜品
