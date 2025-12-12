@@ -460,6 +460,7 @@
                 if (confirm('确定要删除这个分类吗？')) {
                     categories.splice(index, 1);
                     saveCategories(categories);
+                    
                     loadCategoryTable();
                     updateMenuCategoryOptions();
                     alert('分类删除成功！');
@@ -674,6 +675,7 @@
             }
             
             localStorage.setItem('menuItems', JSON.stringify(menuItems));
+            
             loadMenuTable();
             closeModal();
         }
@@ -702,6 +704,7 @@
                 let menuItems = JSON.parse(localStorage.getItem('menuItems') || '[]');
                 menuItems = menuItems.filter(i => i.id !== id);
                 localStorage.setItem('menuItems', JSON.stringify(menuItems));
+                
                 loadMenuTable();
             }
         }

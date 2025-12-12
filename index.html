@@ -619,35 +619,54 @@
             const expectedVersion = '1.1'; // 更新版本号表示数据格式已变更
             
             if (currentVersion !== expectedVersion) {
+                // 清理旧数据
+                cleanOldData();
+                // 重置菜品数据
+                localStorage.removeItem('menuItems');
                 // 设置新版本号
                 localStorage.setItem('dataVersion', expectedVersion);
+                // 重新初始化数据
+                initSampleData();
             }
         }
 
         // 初始化示例数据
         function initSampleData() {
-            // 清理旧数据
-            cleanOldData();
-            
-            // 从menu_data.json文件加载最新数据
-            fetch('menu_data.json')
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('Failed to load menu data');
-                    }
-                })
-                .then(data => {
-                    // 从文件加载数据成功
-                    // 检查数据格式是否包含menuItems数组
-                    if (data.menuItems && Array.isArray(data.menuItems)) {
-                        localStorage.setItem('menuItems', JSON.stringify(data.menuItems));
-                        // 如果有分类数据，也保存到localStorage
-                        if (data.categories && Array.isArray(data.categories)) {
-                            localStorage.setItem('categories', JSON.stringify(data.categories));
+            // 检查localStorage中是否已有数据
+            if (!localStorage.getItem('menuItems')) {
+                // 从menu_data.json文件加载数据
+                fetch('menu_data.json')
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
                         } else {
-                            // 如果没有分类数据，使用默认分类
+                            throw new Error('Failed to load menu data');
+                        }
+                    })
+                    .then(data => {
+                        // 从文件加载数据成功
+                        // 检查数据格式是否包含menuItems数组
+                        if (data.menuItems && Array.isArray(data.menuItems)) {
+                            localStorage.setItem('menuItems', JSON.stringify(data.menuItems));
+                            // 如果有分类数据，也保存到localStorage
+                            if (data.categories && Array.isArray(data.categories)) {
+                                localStorage.setItem('categories', JSON.stringify(data.categories));
+                            } else {
+                                // 如果没有分类数据，使用默认分类
+                                const defaultCategories = [
+                                    { id: 1, name: '小吃' },
+                                    { id: 2, name: '咖啡' },
+                                    { id: 3, name: '茶类' },
+                                    { id: 4, name: '冰饮' },
+                                    { id: 5, name: '套餐' },
+                                    { id: 6, name: '饮料' }
+                                ];
+                                localStorage.setItem('categories', JSON.stringify(defaultCategories));
+                            }
+                        } else {
+                            // 兼容旧格式数据
+                            localStorage.setItem('menuItems', JSON.stringify(data));
+                            // 设置默认分类
                             const defaultCategories = [
                                 { id: 1, name: '小吃' },
                                 { id: 2, name: '咖啡' },
@@ -658,9 +677,37 @@
                             ];
                             localStorage.setItem('categories', JSON.stringify(defaultCategories));
                         }
-                    } else {
-                        // 兼容旧格式数据
-                        localStorage.setItem('menuItems', JSON.stringify(data));
+                    })
+                    .catch(error => {
+                        // 加载失败，使用默认示例数据
+                        console.log('无法加载menu_data.json文件，使用默认示例数据:', error);
+                        const sampleMenu = [
+                            {
+                                id: 1,
+                                name: '薯条',
+                                price: 24,
+                                image: 'http://via.placeholder.com/150x150?text=薯条',
+                                description: '香脆可口的薯条',
+                                category: '小吃'
+                            },
+                            {
+                                id: 2,
+                                name: '汉堡',
+                                price: 38,
+                                image: 'http://via.placeholder.com/150x150?text=汉堡',
+                                description: '美味的牛肉汉堡',
+                                category: '小吃'
+                            },
+                            {
+                                id: 3,
+                                name: '可乐',
+                                price: 12,
+                                image: 'http://via.placeholder.com/150x150?text=可乐',
+                                description: '冰爽可乐',
+                                category: '饮料'
+                            }
+                        ];
+                        localStorage.setItem('menuItems', JSON.stringify(sampleMenu));
                         // 设置默认分类
                         const defaultCategories = [
                             { id: 1, name: '小吃' },
@@ -671,50 +718,8 @@
                             { id: 6, name: '饮料' }
                         ];
                         localStorage.setItem('categories', JSON.stringify(defaultCategories));
-                    }
-                })
-                .catch(error => {
-                    // 加载失败，使用默认示例数据
-                    console.log('无法加载menu_data.json文件，使用默认示例数据:', error);
-                    const sampleMenu = [
-                        {
-                            id: 1,
-                            name: '薯条',
-                            price: 24,
-                 
-                            image: 'http://via.placeholder.com/150x150?text=薯条',
-                            description: '香脆可口的薯条',
-                            category: '小吃'
-                        },
-                        {
-                            id: 2,
-                            name: '汉堡',
-                            price: 38,
-                            image: 'http://via.placeholder.com/150x150?text=汉堡',
-                            description: '美味的牛肉汉堡',
-                            category: '小吃'
-                        },
-                        {
-                            id: 3,
-                            name: '可乐',
-                            price: 12,
-                            image: 'http://via.placeholder.com/150x150?text=可乐',
-                            description: '冰爽可乐',
-                            category: '饮料'
-                        }
-                    ];
-                    localStorage.setItem('menuItems', JSON.stringify(sampleMenu));
-                    // 设置默认分类
-                    const defaultCategories = [
-                        { id: 1, name: '小吃' },
-                        { id: 2, name: '咖啡' },
-                        { id: 3, name: '茶类' },
-                        { id: 4, name: '冰饮' },
-                        { id: 5, name: '套餐' },
-                        { id: 6, name: '饮料' }
-                    ];
-                    localStorage.setItem('categories', JSON.stringify(defaultCategories));
-                });
+                        });
+            }
         }
         
         // 获取所有菜品分类
