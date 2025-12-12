@@ -174,11 +174,7 @@
             margin-bottom: 10px;
         }
         
-        .menu-item .sales {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
-        }
+        
         
         /* 购物车已选数量 */
         .cart-quantity {
@@ -474,7 +470,7 @@
                 font-size: 15px;
             }
             
-            .menu-item .sales, .menu-item .description {
+            .menu-item .description {
                 font-size: 11px;
                 margin-bottom: 4px;
             }
@@ -638,7 +634,7 @@
                                 id: 1,
                                 name: '薯条',
                                 price: 24,
-                                sales: 0, // 已售从零开始计数
+                    
                                 image: 'http://via.placeholder.com/150x150?text=薯条',
                                 description: '香脆可口的薯条',
                                 category: '小吃'
@@ -647,7 +643,6 @@
                                 id: 2,
                                 name: '汉堡',
                                 price: 38,
-                                sales: 0,
                                 image: 'http://via.placeholder.com/150x150?text=汉堡',
                                 description: '美味的牛肉汉堡',
                                 category: '小吃'
@@ -656,7 +651,6 @@
                                 id: 3,
                                 name: '可乐',
                                 price: 12,
-                                sales: 0,
                                 image: 'http://via.placeholder.com/150x150?text=可乐',
                                 description: '冰爽可乐',
                                 category: '饮料'
@@ -740,7 +734,6 @@
                     <div class="menu-item-info">
                         <h3>${item.name}</h3>
                         <div class="price">¥${item.price}/份</div>
-                        <div class="sales">已售 ${item.sales}</div>
                         <div class="description">${item.description}</div>
                         ${quantity > 0 ? `<div class="cart-quantity">已选 ${quantity} 份</div>` : ''}
                         <div class="actions">
@@ -1073,17 +1066,7 @@
             orders.push(order);
             localStorage.setItem('orders', JSON.stringify(orders));
             
-            // 累计已售数量：遍历订单中的每个菜品，更新其已售数量
-            const menuItems = JSON.parse(localStorage.getItem('menuItems')) || [];
-            cart.forEach(cartItem => {
-                const menuItemIndex = menuItems.findIndex(menuItem => menuItem.id === cartItem.id);
-                if (menuItemIndex > -1) {
-                    // 累计已售数量（购物车中该菜品的数量）
-                    menuItems[menuItemIndex].sales += cartItem.quantity;
-                }
-            });
-            // 保存更新后的菜品数据
-            localStorage.setItem('menuItems', JSON.stringify(menuItems));
+
             
             // 清空购物车
             localStorage.removeItem('cart');
@@ -1092,7 +1075,7 @@
             loadCartItems();
             updateCartCount();
             closeCartModal();
-            // 重新渲染菜品列表，使已售数量更新并重置已选数量为零
+            // 重新渲染菜品列表并重置已选数量为零
             loadMenu();
             
             alert(`订单已提交成功！\n订单号：${order.id}\n总金额：¥${total.toFixed(2)}`);

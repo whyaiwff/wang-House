@@ -252,7 +252,6 @@
                     <th>ID</th>
                     <th>名称</th>
                     <th>价格</th>
-                    <th>已售</th>
                     <th>分类</th>
                     <th>描述</th>
                     <th>图片</th>
@@ -283,10 +282,7 @@
                     <input type="number" id="menuPrice" step="0.01" required>
                 </div>
                 
-                <div class="form-group">
-                    <label for="menuSales">已售</label>
-                    <input type="number" id="menuSales" min="0" required>
-                </div>
+
                 
                 <div class="form-group">
                     <label for="menuCategory">分类</label>
@@ -483,7 +479,6 @@
                         <td>${item.id}</td>
                         <td>${item.name}</td>
                         <td>¥${item.price}</td>
-                        <td>${item.sales}</td>
                         <td>${item.category}</td>
                         <td>${item.description}</td>
                         <td><img src="${item.image}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover;"></td>
@@ -607,7 +602,6 @@
                 document.getElementById('menuId').value = item.id;
                 document.getElementById('menuName').value = item.name;
                 document.getElementById('menuPrice').value = item.price;
-                document.getElementById('menuSales').value = item.sales;
                 document.getElementById('menuCategory').value = item.category;
                 document.getElementById('menuDescription').value = item.description;
                 
@@ -629,7 +623,6 @@
             const id = parseInt(document.getElementById('menuId').value);
             const name = document.getElementById('menuName').value;
             const price = parseFloat(document.getElementById('menuPrice').value);
-            const sales = parseInt(document.getElementById('menuSales').value);
             const category = document.getElementById('menuCategory').value;
             const description = document.getElementById('menuDescription').value;
             const fileInput = document.getElementById('menuImage');
@@ -640,14 +633,14 @@
             if (preview.children.length > 0) {
                 // 如果有预览图片（裁剪后的）
                 const imageData = preview.children[0].src;
-                saveMenuData(id, name, price, sales, category, description, imageData, menuItems);
+                saveMenuData(id, name, price, category, description, imageData, menuItems);
             } else if (fileInput.files.length > 0) {
                 // 如果选择了新图片但还没裁剪，直接使用
                 const reader = new FileReader();
                 
                 reader.onload = function(e) {
                     const imageData = e.target.result;
-                    saveMenuData(id, name, price, sales, category, description, imageData, menuItems);
+                    saveMenuData(id, name, price, category, description, imageData, menuItems);
                 }
                 
                 reader.readAsDataURL(fileInput.files[0]);
@@ -656,28 +649,28 @@
                 if (id) {
                     const existingItem = menuItems.find(i => i.id === id);
                     if (existingItem) {
-                        saveMenuData(id, name, price, sales, category, description, existingItem.image, menuItems);
+                        saveMenuData(id, name, price, category, description, existingItem.image, menuItems);
                     }
                 } else {
                     // 添加新菜品但没有图片，使用默认图片
                     const defaultImage = 'http://via.placeholder.com/150x150?text=默认图片';
-                    saveMenuData(id, name, price, sales, category, description, defaultImage, menuItems);
+                    saveMenuData(id, name, price, category, description, defaultImage, menuItems);
                 }
             }
         });
         
         // 保存菜品数据
-        function saveMenuData(id, name, price, sales, category, description, image, menuItems) {
+        function saveMenuData(id, name, price, category, description, image, menuItems) {
             if (id) {
                 // 编辑现有菜品
                 const index = menuItems.findIndex(i => i.id === id);
                 if (index !== -1) {
-                    menuItems[index] = {id, name, price, sales, category, description, image};
+                    menuItems[index] = {id, name, price, category, description, image};
                 }
             } else {
                 // 添加新菜品
                 const newId = menuItems.length > 0 ? Math.max(...menuItems.map(i => i.id)) + 1 : 1;
-                menuItems.push({id: newId, name, price, sales, category, description, image});
+                menuItems.push({id: newId, name, price, category, description, image});
             }
             
             localStorage.setItem('menuItems', JSON.stringify(menuItems));
@@ -716,7 +709,15 @@
         // 导出菜品数据
         function exportMenu() {
             const menuItems = JSON.parse(localStorage.getItem('menuItems') || '[]');
-            const dataStr = JSON.stringify(menuItems, null, 2);
+            const categories = JSON.parse(localStorage.getItem('categories') || '[]');
+            
+            // 创建包含菜品和分类信息的完整数据结构
+            const fullData = {
+                categories: categories,
+                menuItems: menuItems
+            };
+            
+            const dataStr = JSON.stringify(fullData, null, 2);
             const dataBlob = new Blob([dataStr], {type: 'application/json'});
             const url = URL.createObjectURL(dataBlob);
             
@@ -737,9 +738,19 @@
             reader.onload = function(e) {
                 try {
                     const importedData = JSON.parse(e.target.result);
+                    
                     if (Array.isArray(importedData)) {
+                        // 旧格式：只包含菜品数据
                         localStorage.setItem('menuItems', JSON.stringify(importedData));
                         loadMenuTable();
+                        alert('导入成功！');
+                    } else if (importedData.menuItems && importedData.categories) {
+                        // 新格式：包含菜品和分类数据
+                        localStorage.setItem('menuItems', JSON.stringify(importedData.menuItems));
+                        localStorage.setItem('categories', JSON.stringify(importedData.categories));
+                        loadMenuTable();
+                        loadCategoryTable();
+                        updateMenuCategoryOptions();
                         alert('导入成功！');
                     } else {
                         alert('导入的数据格式不正确！');
@@ -764,10 +775,18 @@
                 .then(data => {
                     // 验证数据格式
                     if (Array.isArray(data)) {
-                        // 保存到localStorage
+                        // 旧格式：只包含菜品数据
                         localStorage.setItem('menuItems', JSON.stringify(data));
                         // 更新菜品表格
                         loadMenuTable();
+                        alert('从文件加载数据成功！');
+                    } else if (data.menuItems && data.categories) {
+                        // 新格式：包含菜品和分类数据
+                        localStorage.setItem('menuItems', JSON.stringify(data.menuItems));
+                        localStorage.setItem('categories', JSON.stringify(data.categories));
+                        loadMenuTable();
+                        loadCategoryTable();
+                        updateMenuCategoryOptions();
                         alert('从文件加载数据成功！');
                     } else {
                         alert('menu_data.json文件格式不正确！');
